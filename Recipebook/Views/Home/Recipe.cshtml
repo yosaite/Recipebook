@@ -1,0 +1,25 @@
+﻿@model Recipe
+@{
+    ViewData["Title"] = "Recipe";
+}
+
+<h1>@Model.Name</h1>
+@if(Model.Images.Count != 0)
+{
+    <img src="@Model.Images.First().Path" width="350" height="350">
+}
+<p>@Model.Description</p>
+<h3>Składniki:</h3>
+<ul>
+    @foreach(var item in Model.Ingredients)
+    {
+        <li>@item</li>
+    }
+</ul>
+<h3>Sposób przygotowania:</h3>
+<p>@Model.Directions</p>
+<p>Ocena: @Model.Rating/5</p>
+<p>Dodano przez: @Model.ApplicationUser.Email</p>
+
+
+

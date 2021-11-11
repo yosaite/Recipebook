@@ -20,5 +20,10 @@ namespace Recipebook.Services
             return list;
         }
 
+        public Recipe GetRecipe(ulong id)
+        {
+           return dbContext.Recipes.Where(r => r.Id == id).Include(m => m.Images).Include(m => m.ApplicationUser).FirstOrDefault();
+        }
+
     }
 }

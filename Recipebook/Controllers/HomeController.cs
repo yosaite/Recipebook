@@ -25,6 +25,10 @@ namespace Recipebook.Controllers
         {
             return View(_recipeService.GetRecipe());
         }
+        public IActionResult Recipe(ulong recipeId)
+        {
+            return View(_recipeService.GetRecipe(recipeId));
+        }
 
         public IActionResult Privacy()
         {

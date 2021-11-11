@@ -5,6 +5,7 @@ namespace Recipebook.Services
 {
     public interface IRecipeService
     {
-        List<Recipe> GetRecipe();
+        public List<Recipe> GetRecipe();
+        public Recipe GetRecipe(ulong id);
     }
 }

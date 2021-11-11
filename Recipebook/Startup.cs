@@ -42,6 +42,7 @@ namespace Recipebook
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddRouting(options => options.LowercaseUrls = true);
             services.AddControllersWithViews();
         }
 
