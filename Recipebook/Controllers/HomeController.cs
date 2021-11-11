@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Recipebook.Models;
+using Recipebook.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,15 +13,17 @@ namespace Recipebook.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IRecipeService _recipeService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IRecipeService recipeService)
         {
             _logger = logger;
+            _recipeService = recipeService;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View(_recipeService.GetRecipe());
         }
 
         public IActionResult Privacy()

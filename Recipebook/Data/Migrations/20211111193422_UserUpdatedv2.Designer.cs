@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Recipebook.Data;
 
 namespace Recipebook.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211111193422_UserUpdatedv2")]
+    partial class UserUpdatedv2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -276,11 +278,8 @@ namespace Recipebook.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<ulong>("TotalRatingValue")
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<ulong>("TotalUserRating")
-                        .HasColumnType("bigint unsigned");
+                    b.Property<string>("UserId")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 

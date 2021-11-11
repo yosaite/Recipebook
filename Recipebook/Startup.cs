@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Recipebook.Data;
+using Recipebook.Models;
 using Recipebook.Services;
 using System;
 using System.Collections.Generic;
@@ -35,9 +36,11 @@ namespace Recipebook
                     )
                 );
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IRecipeService, RecipeService>();
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
         }

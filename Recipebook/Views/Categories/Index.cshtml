@@ -1,14 +1,12 @@
 ﻿@model IEnumerable<Category>
 
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
+    ViewData["Title"] = "Kategorie";
 }
-<h1>Hello</h1>
+
+<h1>Kategoryje</h1>
+
 @foreach(var item in Model)
 {
     @item.Name; <br />
-    @item.Id;
-
 }

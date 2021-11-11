@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Recipebook.Data;
 
 namespace Recipebook.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211111181923_UserUpdated")]
+    partial class UserUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,9 +257,6 @@ namespace Recipebook.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint unsigned");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<ulong>("CategoryId")
                         .HasColumnType("bigint unsigned");
 
@@ -276,15 +275,7 @@ namespace Recipebook.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<ulong>("TotalRatingValue")
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<ulong>("TotalUserRating")
-                        .HasColumnType("bigint unsigned");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("CategoryId");
 
@@ -351,17 +342,11 @@ namespace Recipebook.Migrations
 
             modelBuilder.Entity("Recipebook.Models.Recipe", b =>
                 {
-                    b.HasOne("Recipebook.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Recipebook.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Category");
                 });
