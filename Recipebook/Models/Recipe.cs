@@ -21,14 +21,13 @@ namespace Recipebook.Models
         public virtual ApplicationUser ApplicationUser { get; set; }
         [ForeignKey("AspNetUsers")]
         public string ApplicationUserId { get; set; }
-        public ulong TotalRatingValue { get; set; }
-        public ulong TotalUserRating { get; set; }
+        public ulong TotalRatingValue { get; set; } = 0;
+        public ulong TotalUserRating { get; set; } = 0;
         [NotMapped]
-        public float Rating { get => TotalRatingValue / TotalUserRating; }
+        public float Rating { get => TotalUserRating == 0 ? 0 : (float)Math.Round(((float)TotalRatingValue / (float)TotalUserRating), 1); }
         public Recipe()
         {
             Created = DateTime.Now;
         }
-
     }
 }

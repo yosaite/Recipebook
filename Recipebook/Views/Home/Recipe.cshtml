@@ -6,7 +6,7 @@
 <h1>@Model.Name</h1>
 @if(Model.Images.Count != 0)
 {
-    <img src="@Model.Images.First().Path" width="350" height="350">
+    <img src="@Model.Images.First().Path" class="rec">
 }
 <p>@Model.Description</p>
 <h3>Składniki:</h3>
@@ -19,7 +19,17 @@
 <h3>Sposób przygotowania:</h3>
 <p>@Model.Directions</p>
 <p>Ocena: @Model.Rating/5</p>
-<p>Dodano przez: @Model.ApplicationUser.Email</p>
+<p>Dodano przez: @Model.ApplicationUser.UserName</p>
+
+@section Styles{
+    <style>
+        .rec{
+            height: 500px; 
+            width: 70%; 
+            object-fit: cover;
+        }
+    </style>
+}
 
 
 

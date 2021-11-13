@@ -21,6 +21,15 @@
                 <div class="d-flex flex-row align-items-center mb-4">
                 <div class="form-outline flex-fill mb-0 input-group">
                     <div class="input-group-prepend"></div>
+                    <span class="input-group-text"><i class="fas fa-user fa-lg me-3 fa-fw"></i></span>
+                    <input asp-for="Input.UserName" type="text" class="form-control" placeholder="Nazwa użytkownika" />
+                    <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                </div>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-4">
+                <div class="form-outline flex-fill mb-0 input-group">
+                    <div class="input-group-prepend"></div>
                     <span class="input-group-text"><i class="fas fa-envelope fa-lg me-3 fa-fw"></i></span>
                     <input asp-for="Input.Email" type="email" class="form-control" placeholder="Adres email" />
                     <span asp-validation-for="Input.Email" class="text-danger"></span>
