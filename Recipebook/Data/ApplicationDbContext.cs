@@ -35,6 +35,7 @@ namespace Recipebook.Data
                 .Property(e => e.Ingredients)
                 .Metadata
                 .SetValueComparer(valueComparer);
+
         }
     }
 }

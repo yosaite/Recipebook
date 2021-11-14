@@ -4,9 +4,51 @@
     ViewData["Title"] = "Kategorie";
 }
 
-<h1>Kategoryje</h1>
+<div class="album py-4" style="border-radius: 25px">
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 d-flex">
+                <div class="card pop mb-4 box-shadow flex-fill">
+                    @if (@item.ImagePath != null && @item.ImagePath != "")
+                    {
+                        <img class="card-img" alt="Card image cap" src="@item.ImagePath">
+                    }
+                    else
+                    {
+                        <img class="card-img" alt="Card image cap" src="https://www.macmillandictionary.com/us/external/slideshow/full/Grey_full.png">
+                    }
+                    <div class="card-img-overlay"></div>
+                    <div class="card-footer bg-dark">
+                        <div class="align-items-center d-flex justify-content-center">
+                            <h5 class="text-white"><a asp-controller="Home" asp-action="Index" asp-route-categoryId="@item.Id" asp-route-categoryName="@item.Name" class="des stretched-link">@item.Name</a></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
-@foreach(var item in Model)
-{
-    @item.Name; <br />
+@section Styles{
+<style>
+    .card-img {
+        height: 225px;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .des,
+    .des:hover {
+        text-decoration: none;
+        color: white;
+    }
+
+    .pop:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
+        z-index: 3;
+        border-color: grey !important;
+    }
+</style>
 }

@@ -11,13 +11,18 @@
     </div>
 
 </div>
-<div class="album py-5 bg-light" style="border-radius: 25px">
+<div class="album py-4" style="border-radius: 25px">
+    <h6 class="display-4 text-center">@ViewBag.CategoryName</h6>
     <div class="container">
+        @if(@ViewBag.CategoryName != "")
+        {
+            <hr />
+        }
         <div class="row">
             @foreach (var item in Model)
             {
                 <div class="col-md-4 d-flex">
-                    <div class="card mb-4 box-shadow flex-fill">
+                    <div class="card pop mb-4 box-shadow flex-fill">
                         @if (@item.Images.Count != 0)
                         {
                             <img class="card-img-top" alt="Card image cap" src="@item.Images.First().Path">
@@ -62,6 +67,13 @@
     .des:hover {
         text-decoration: none;
         color: black;
+    }
+
+    .pop:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
+        z-index: 3;
+        border-color: grey !important;
     }
 </style>
 }

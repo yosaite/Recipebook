@@ -3,12 +3,12 @@
     ViewData["Title"] = "Recipe";
 }
 
-<h1>@Model.Name</h1>
 @if(Model.Images.Count != 0)
 {
     <img src="@Model.Images.First().Path" class="rec">
 }
-<p>@Model.Description</p>
+<h1>@Model.Name</h1>
+<p class="lin">@Model.Description</p>
 <h3>Składniki:</h3>
 <ul>
     @foreach(var item in Model.Ingredients)
@@ -17,9 +17,16 @@
     }
 </ul>
 <h3>Sposób przygotowania:</h3>
-<p>@Model.Directions</p>
+<p class="lin">@Model.Directions</p>
 <p>Ocena: @Model.Rating/5</p>
-<p>Dodano przez: @Model.ApplicationUser.UserName</p>
+@if(@Model.ApplicationUser == null)
+{
+    <p>Dodano przez: Użytkownik nie istnieje</p>
+}
+else
+{
+    <p>Dodano przez: @Model.ApplicationUser.UserName</p>
+}
 
 @section Styles{
     <style>
@@ -27,6 +34,9 @@
             height: 500px; 
             width: 70%; 
             object-fit: cover;
+        }
+        .lin{
+            white-space: pre-line;
         }
     </style>
 }

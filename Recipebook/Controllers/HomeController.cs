@@ -21,9 +21,10 @@ namespace Recipebook.Controllers
             _recipeService = recipeService;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(ulong categoryId = 0,string categoryName="")
         {
-            return View(_recipeService.GetRecipe());
+            ViewBag.CategoryName = categoryName;
+            return View(_recipeService.GetRecipes(categoryId));
         }
         public IActionResult Recipe(ulong recipeId)
         {

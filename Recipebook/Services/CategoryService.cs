@@ -15,7 +15,7 @@ namespace Recipebook.Services
         }
         public List<Category> GetCatogory()
         {
-            return dbContext.Categories.ToList();
+            return dbContext.Categories.OrderBy(c => c.Name).ToList();
         }
     }
 }
