@@ -1,6 +1,12 @@
 ﻿@model IEnumerable<Recipe>
-@{
-    ViewData["Title"] = "Home";
+
+@if (@ViewBag.CategoryName != "")
+{
+     ViewData["Title"] = @ViewBag.CategoryName;
+}
+else
+{
+    ViewData["Title"] = "Strona domowa";
 }
 
 <div class="text-center">
@@ -11,6 +17,7 @@
     </div>
 
 </div>
+
 <div class="album py-4" style="border-radius: 25px">
     <h6 class="display-4 text-center">@ViewBag.CategoryName</h6>
     <div class="container">

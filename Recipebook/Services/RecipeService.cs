@@ -16,7 +16,7 @@ namespace Recipebook.Services
         }
         public List<Recipe> GetRecipes()
         {
-            var list = dbContext.Recipes.Include(m => m.Images).ToList();
+            var list = dbContext.Recipes.Include(m => m.Images).OrderByDescending(m => m.TotalRatingValue/m.TotalUserRating).ToList();
             return list;
         }
 

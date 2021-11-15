@@ -8,6 +8,9 @@ namespace Recipebook.Models
         [Key]
         public ulong Id { get; set;}
         public string Name { get; set;}
-        public string ImagePath { get; set; }
+        public Image? Image { get; set;}
+        [ForeignKey("Image")]
+        public ulong? ImageId { get; set; }
+
     }
 }

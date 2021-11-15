@@ -1,45 +1,142 @@
 ﻿@model Recipe
+@using System.Linq;
+
 @{
-    ViewData["Title"] = "Recipe";
+    ViewData["Title"] = @Model.Name;
 }
 
-@if(Model.Images.Count != 0)
-{
-    <img src="@Model.Images.First().Path" class="rec">
-}
-<h1>@Model.Name</h1>
-<p class="lin">@Model.Description</p>
-<h3>Składniki:</h3>
-<ul>
-    @foreach(var item in Model.Ingredients)
-    {
-        <li>@item</li>
-    }
-</ul>
-<h3>Sposób przygotowania:</h3>
-<p class="lin">@Model.Directions</p>
-<p>Ocena: @Model.Rating/5</p>
-@if(@Model.ApplicationUser == null)
-{
-    <p>Dodano przez: Użytkownik nie istnieje</p>
-}
-else
-{
-    <p>Dodano przez: @Model.ApplicationUser.UserName</p>
-}
+<div class="receipe-post-area section-padding-80">
+
+    <!-- Receipe Slider -->
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        @if (@Model.Images.Count != 0)
+                        {
+                            var first = true;
+
+                            @foreach (var img in @Model.Images)
+                            {
+
+                                <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
+                                    <img class="d-block w-100 rec" src="@img.Path">
+                                </div>
+                                first = false;
+                            }
+                        }
+                        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                            <span><i class="fas fa-2x fa-chevron-left"></i></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                            <span><i class="fas fa-2x fa-chevron-right"></i></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipe Content Area -->
+        <div class="receipe-content-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-md-8">
+                        <div class="receipe-headline my-5">
+                            @if (@Model.ApplicationUser == null)
+                            {
+                                <small class="text-muted">Dodano: @Model.Created.ToString("dd MMMM yyyy") przez Użytkownik nie istnieje</small>
+                            }
+                            else
+                            {
+                                <small class="text-muted">Dodano: @Model.Created.ToString("dd MMMM yyyy") przez @Model.ApplicationUser.UserName</small>
+                            }
+                            <h2 class="mt-2 mb-4">@Model.Name</h2>
+                            <div class="l-bor">
+                                <h6>Czas przygotowania: @Model.PreparationTime minut</h6>
+                                <h6>Czas gotowania: @Model.CookingTime minut</h6>
+                                <h6>Porcje: @Model.Yields</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Rating -->
+                    <div class="col-12 col-md-4">
+                        <div class="receipe-ratings text-right my-5">
+                            <div class="ratings">
+                                <span class="text-muted">Ocena: @Model.Rating/5</span>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="far fa-star" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Description -->
+                <div class="row">
+                    <div class="col-12 col-lg-12 mb-5">
+                        @Model.Description
+                    </div>
+
+                    <!--Directions -->
+                    <div class="col-12 col-lg-8">
+                        <div class="single-preparation-step">
+                            <h4>Sposób przygotowania</h4>
+                            <p>@Model.Directions</p>
+                        </div>
+                    </div>
+
+                    <!-- Ingredients -->
+                    <div class="col-12 col-lg-4 l-bor-2 pl-4">
+                        <div class="ingredients">
+                            <h4>Składniki</h4>
+                            @foreach (var item in Model.Ingredients.Select((value,index)=>(value,index)))
+                            {
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id=@(item.index.ToString())>
+                                    <label class="custom-control-label" for=@(item.index.ToString())>@item.value</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Styles{
-    <style>
-        .rec{
-            height: 500px; 
-            width: 70%; 
-            object-fit: cover;
-        }
-        .lin{
-            white-space: pre-line;
-        }
-    </style>
-}
+<style>
+    .rec {
+        height: 400px;
+        width: 70%;
+        object-fit: contain;
+    }
 
+    .lin {
+        white-space: pre-line;
+    }
 
+    .l-bor {
+        border-left: 3px solid gray;
+        padding: 15px;
+    }
 
+    .l-bor-2 {
+        border-left: 2px solid grey;
+    }
+    
+    .fa-chevron-left {
+        color: gray;
+    }
+
+    .fa-chevron-right {
+        color: gray;
+    }
+</style>
+ }

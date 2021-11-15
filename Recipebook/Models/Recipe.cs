@@ -13,6 +13,9 @@ namespace Recipebook.Models
         public List<string> Ingredients { get; set; }
         public string Directions { get; set; }
         public string Description { get; set; }
+        public uint PreparationTime { get; set; }
+        public uint CookingTime { get; set; }
+        public uint Yields { get; set; }
         public virtual Category Category { get; set; }
         [ForeignKey("Category")]
         public ulong CategoryId { get; set; }

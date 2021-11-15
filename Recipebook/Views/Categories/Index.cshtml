@@ -10,9 +10,9 @@
         {
             <div class="col-md-4 d-flex">
                 <div class="card pop mb-4 box-shadow flex-fill">
-                    @if (@item.ImagePath != null && @item.ImagePath != "")
+                    @if (@item.Image != null && @item.Image.Path != "")
                     {
-                        <img class="card-img" alt="Card image cap" src="@item.ImagePath">
+                        <img class="card-img" alt="Card image cap" src="@item.Image.Path">
                     }
                     else
                     {

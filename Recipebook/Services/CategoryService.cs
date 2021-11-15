@@ -1,4 +1,5 @@
-﻿using Recipebook.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Recipebook.Data;
 using Recipebook.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Recipebook.Services
         }
         public List<Category> GetCatogory()
         {
-            return dbContext.Categories.OrderBy(c => c.Name).ToList();
+            return dbContext.Categories.Include(m => m.Image).OrderBy(c => c.Name).ToList();
         }
     }
 }
