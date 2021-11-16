@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Recipebook.Data;
 using Recipebook.Models;
 using System.Collections.Generic;
@@ -32,6 +33,15 @@ namespace Recipebook.Services
                 return GetRecipes();
             }
             return dbContext.Recipes.Include(m => m.Images).Where(c => c.CategoryId == categoryId).ToList();
+        }
+
+        public List<Recipe> GetRecipes(string userId)
+        { 
+            if(userId is null){
+                return GetRecipes();
+            }
+            return dbContext.Recipes.Include(m => m.Images).Include(m => m.ApplicationUser).Where(c => c.ApplicationUserId == userId).ToList();
+
         }
 
     }

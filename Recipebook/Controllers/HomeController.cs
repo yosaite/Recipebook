@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Recipebook.Models;
 using Recipebook.Services;
@@ -14,23 +16,31 @@ namespace Recipebook.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IRecipeService _recipeService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, IRecipeService recipeService)
+        public HomeController(ILogger<HomeController> logger, IRecipeService recipeService, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
             _recipeService = recipeService;
+            _userManager = userManager;
         }
 
         public IActionResult Index(ulong categoryId = 0,string categoryName="")
         {
-            ViewBag.CategoryName = categoryName;
+            ViewBag.ListTitle = categoryName;
             return View(_recipeService.GetRecipes(categoryId));
         }
         public IActionResult Recipe(ulong recipeId)
         {
             return View(_recipeService.GetRecipe(recipeId));
         }
-
+        [Authorize(Roles="User, Admin")]
+        public IActionResult UserRecipes()
+        {
+            var userId = _userManager.GetUserId(HttpContext.User);
+            ViewBag.ListTitle = "Moje przepisy";
+            return View("Index", _recipeService.GetRecipes(userId));
+        }
         public IActionResult Privacy()
         {
             return View();

@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace Recipebook.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, string>
     {
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Category> Categories { get; set; }

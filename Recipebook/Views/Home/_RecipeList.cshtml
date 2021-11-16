@@ -1,26 +1,6 @@
-﻿@model List<Recipe>
-
-@if (@ViewBag.ListTitle != "")
-{
-     ViewData["Title"] = @ViewBag.ListTitle;
-}
-else
-{
-    ViewData["Title"] = "Strona domowa";
-}
-
-<div class="text-center">
-    <div class="card mb-4 box-shadow bg-light" style="border-radius: 25px">
-        <h1 class="display-4">Witejcie</h1> <br />
-        <p>Tukej  bydzie kejś fajnŏ ksiōnżka z receptami.</p>
-        <p>Może niy lepszŏ ale jako tako.</p>
-    </div>
-</div>
-
-<div class="album py-4" style="border-radius: 25px">
-    <h6 class="display-4 text-center">@ViewBag.ListTitle</h6>
+﻿ @model List<Recipe>
     <div class="container">
-        @if(@ViewBag.ListTitle != "")
+        @if(@ViewBag.CategoryName != "")
         {
             <hr />
         }
@@ -59,9 +39,7 @@ else
             }
         </div>
     </div>
-</div>
 
-@section Styles{
 <style>
     .card-img-top {
         height: 225px;
@@ -82,4 +60,5 @@ else
         border-color: grey !important;
     }
 </style>
-}
+
+

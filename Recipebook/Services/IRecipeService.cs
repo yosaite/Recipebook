@@ -8,5 +8,6 @@ namespace Recipebook.Services
         public List<Recipe> GetRecipes();
         public Recipe GetRecipe(ulong id);
         public List<Recipe> GetRecipes(ulong categoryId);
+        public List<Recipe> GetRecipes(string userId);
     }
 }
