@@ -1,0 +1,62 @@
+﻿@model Recipe
+
+@{
+    ViewData["Title"] = "Dodaj przepis";
+}
+
+<div class="container h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-lg-12 col-xl-11">
+            <div class="card text-black" style="border-radius: 25px;">
+                <div class="card-body p-md-5">
+                    <h4 class="mb-3">Dodaj przepis</h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName">Nazwa przepisu</label>
+                            <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName">Kategoria</label>
+                            <select class="form-control" id="exampleFormControlSelect1">
+                                <option value="">Wybierz...</option>
+                                <option>test</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="firstName">Czas przygotowania</label>
+                            <input type="number" class="form-control" id="firstName" placeholder="" value="" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="lastName">Czas gotowania</label>
+                            <input type="number" class="form-control" id="lastName" placeholder="" value="" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="lastName">Ilość porcji</label>
+                            <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="firstName">Opis przepisu</label>
+                            <textarea class="form-control" aria-label="With textarea" rows="10"></textarea>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="firstName">Składniki</label>
+                            <textarea class="form-control" aria-label="With textarea" rows="10"></textarea>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="firstName">Sposób przygotowania</label>
+                            <textarea class="form-control" aria-label="With textarea" rows="10"></textarea>
+                        </div>
+                    </div>
+                    <label for="exampleFormControlFile1">Wybierz zdjęcia</label>
+                    <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                    <hr class="mb-4">
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">Dodaj przepis</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

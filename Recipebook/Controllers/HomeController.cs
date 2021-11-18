@@ -41,6 +41,10 @@ namespace Recipebook.Controllers
             ViewBag.ListTitle = "Moje przepisy";
             return View("Index", _recipeService.GetRecipes(userId));
         }
+        public IActionResult AddRecipe()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
