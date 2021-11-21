@@ -46,6 +46,7 @@ namespace Recipebook
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddControllersWithViews();
+            services.AddAutoMapper(typeof(AutoMapper));
 
             services.RunAppSetup();
         }

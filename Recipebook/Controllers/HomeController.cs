@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Recipebook.ViewModel;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Recipebook.Controllers
 {
@@ -17,12 +19,14 @@ namespace Recipebook.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IRecipeService _recipeService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ICategoryService _categoryService;
 
-        public HomeController(ILogger<HomeController> logger, IRecipeService recipeService, UserManager<ApplicationUser> userManager)
+        public HomeController(ILogger<HomeController> logger, IRecipeService recipeService, UserManager<ApplicationUser> userManager, ICategoryService categoryService)
         {
             _logger = logger;
             _recipeService = recipeService;
             _userManager = userManager;
+            _categoryService = categoryService;
         }
 
         public IActionResult Index(ulong categoryId = 0,string categoryName="")
@@ -41,8 +45,31 @@ namespace Recipebook.Controllers
             ViewBag.ListTitle = "Moje przepisy";
             return View("Index", _recipeService.GetRecipes(userId));
         }
+        [HttpGet]
         public IActionResult AddRecipe()
         {
+            ViewBag.CategoriesSelectList = _categoryService.GetCatogory().Select(i => new SelectListItem()
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddRecipe(RecipeVM recipeVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = _userManager.GetUserId(HttpContext.User);
+                recipeVM.ApplicationUserId = userId;
+                _recipeService.AddRecipe(recipeVM);
+                return RedirectToAction("Index");
+            }
+            ViewBag.CategoriesSelectList = _categoryService.GetCatogory().Select(i => new SelectListItem()
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
             return View();
         }
         public IActionResult Privacy()

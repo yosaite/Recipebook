@@ -1,4 +1,5 @@
-﻿@model Recipe
+﻿@using Recipebook.ViewModel
+@model RecipeVM
 
 @{
     ViewData["Title"] = "Dodaj przepis";
@@ -10,51 +11,55 @@
             <div class="card text-black" style="border-radius: 25px;">
                 <div class="card-body p-md-5">
                     <h4 class="mb-3">Dodaj przepis</h4>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="firstName">Nazwa przepisu</label>
-                            <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
+                    <form asp-action="AddRecipe" method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName">Nazwa przepisu</label>
+                                <input asp-for="Name" class="form-control" placeholder="" value="" required>
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName">Kategoria</label>
+                                <select asp-for="CategoryId" class="form-control" asp-items=@ViewBag.CategoriesSelectList >
+                                    <option value="">Wybierz...</option>              
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="lastName">Kategoria</label>
-                            <select class="form-control" id="exampleFormControlSelect1">
-                                <option value="">Wybierz...</option>
-                                <option>test</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="firstName">Czas przygotowania</label>
+                                <input type="number" asp-for="PreparationTime" class="form-control" placeholder="" value="" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="lastName">Czas gotowania</label>
+                                <input type="number" asp-for="CookingTime" class="form-control" id="lastName" placeholder="" value="" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="lastName">Ilość porcji</label>
+                                <input type="text" asp-for="Yields" class="form-control" id="lastName" placeholder="" value="" required>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="firstName">Czas przygotowania</label>
-                            <input type="number" class="form-control" id="firstName" placeholder="" value="" required>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="firstName">Opis przepisu</label>
+                                <textarea class="form-control" aria-label="With textarea" asp-for="Description" rows="10"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="firstName">Składniki</label>
+                                <textarea class="form-control" aria-label="With textarea" rows="10"></textarea>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="firstName">Sposób przygotowania</label>
+                                <textarea class="form-control" aria-label="With textarea" asp-for="Directions" rows="10"></textarea>
+                                <span asp-validation-for="Directions" class="text-danger"></span>
+                            </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="lastName">Czas gotowania</label>
-                            <input type="number" class="form-control" id="lastName" placeholder="" value="" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="lastName">Ilość porcji</label>
-                            <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label for="firstName">Opis przepisu</label>
-                            <textarea class="form-control" aria-label="With textarea" rows="10"></textarea>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label for="firstName">Składniki</label>
-                            <textarea class="form-control" aria-label="With textarea" rows="10"></textarea>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label for="firstName">Sposób przygotowania</label>
-                            <textarea class="form-control" aria-label="With textarea" rows="10"></textarea>
-                        </div>
-                    </div>
-                    <label for="exampleFormControlFile1">Wybierz zdjęcia</label>
-                    <input type="file" class="form-control-file" id="exampleFormControlFile1">
-                    <hr class="mb-4">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit">Dodaj przepis</button>
+                        <label for="exampleFormControlFile1">Wybierz zdjęcia</label>
+                        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                        <hr class="mb-4">
+                        <button class="btn btn-primary btn-lg btn-block" type="submit">Dodaj przepis</button>
+                    </form>
                 </div>
             </div>
         </div>

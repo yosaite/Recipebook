@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Recipebook.Data;
 using Recipebook.Models;
+using Recipebook.ViewModel;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,10 +12,12 @@ namespace Recipebook.Services
     public class RecipeService: IRecipeService
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly IMapper mapper;
 
-        public RecipeService(ApplicationDbContext dbContext)
+        public RecipeService(ApplicationDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
         public List<Recipe> GetRecipes()
         {
@@ -42,6 +46,13 @@ namespace Recipebook.Services
             }
             return dbContext.Recipes.Include(m => m.Images).Include(m => m.ApplicationUser).Where(c => c.ApplicationUserId == userId).ToList();
 
+        }
+
+        public void AddRecipe(RecipeVM recipeVM)
+        {
+            var recipe = mapper.Map<Recipe>(recipeVM);
+            dbContext.Recipes.Add(recipe);
+            dbContext.SaveChanges();
         }
 
     }
