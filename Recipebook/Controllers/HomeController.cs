@@ -58,12 +58,13 @@ namespace Recipebook.Controllers
         [HttpPost]
         public IActionResult AddRecipe(RecipeVM recipeVM)
         {
+            Debug.WriteLine(recipeVM.Ingredients);
             if (ModelState.IsValid)
-            {
-                var userId = _userManager.GetUserId(HttpContext.User);
-                recipeVM.ApplicationUserId = userId;
-                _recipeService.AddRecipe(recipeVM);
-                return RedirectToAction("Index");
+            {       
+                //var userId = _userManager.GetUserId(HttpContext.User);
+                //recipeVM.ApplicationUserId = userId;
+                //_recipeService.AddRecipe(recipeVM);
+                //return RedirectToAction("Index");
             }
             ViewBag.CategoriesSelectList = _categoryService.GetCatogory().Select(i => new SelectListItem()
             {

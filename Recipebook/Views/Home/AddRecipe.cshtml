@@ -47,7 +47,7 @@
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="firstName">Składniki</label>
-                                <textarea class="form-control" aria-label="With textarea" rows="10"></textarea>
+                                <input id="tags-input" type="text" asp-for="Ingredients" class="form-control">
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="firstName">Sposób przygotowania</label>
@@ -65,3 +65,12 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+<script>
+$('#tags-input').tagsinput({
+  confirmKeys: [13],
+  delimiterRegex: /[;]+/
+});
+</script>
+}
