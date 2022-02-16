@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Recipebook.Data;
 
 namespace Recipebook.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220216191722_updateCategories")]
+    partial class updateCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,6 +238,9 @@ namespace Recipebook.Migrations
 
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("varchar(255)");
+
+                    b.Property<uint>("CookingTime")
+                        .HasColumnType("int unsigned");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)");

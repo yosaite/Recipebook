@@ -21,10 +21,6 @@ else
     <div class="container">
         <div class="cent">
             <h6 class="display-4 text-center">@ViewBag.ListTitle</h6>
-            @if (@ViewBag.ListTitle == "Moje przepisy")
-            {
-                <a asp-controller="Recipe" asp-action="Add" class="btn btn-success lef text-white"><i class="fas fa-plus"></i> Dodaj przepis</a>
-            }
         </div>
         @if (@ViewBag.ListTitle != "")
         {
@@ -41,7 +37,7 @@ else
                         }
                         else
                         {
-                            <img class="card-img-top" alt="Card image cap" src="https://kombit.net.pl/wp-content/themes/consultix/images/no-image-found-360x250.png">
+                            <img class="card-img-top" alt="Card image cap" src="/no-image.png">
                         }
                         <div class="card-body">
                             <h5 class="card-title"><a asp-controller="Recipe" asp-action="Recipe" asp-route-recipeId="@item.Id" class="des stretched-link">@item.Name</a></h5>

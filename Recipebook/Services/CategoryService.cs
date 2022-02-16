@@ -14,7 +14,7 @@ namespace Recipebook.Services
         {
             this.dbContext = dbContext;
         }
-        public List<Category> GetCatogory()
+        public List<Category> GetCategories()
         {
             return dbContext.Categories.Include(m => m.Image).OrderBy(c => c.Name).ToList();
         }

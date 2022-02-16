@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Recipebook.Models;
 using Recipebook.Services;
@@ -19,7 +20,8 @@ namespace Recipebook.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICategoryService _categoryService;
 
-        public RecipeController(ILogger<RecipeController> logger, IRecipeService recipeService, UserManager<ApplicationUser> userManager, ICategoryService categoryService)
+        public RecipeController(ILogger<RecipeController> logger, IRecipeService recipeService,
+            UserManager<ApplicationUser> userManager, ICategoryService categoryService)
         {
             _logger = logger;
             _recipeService = recipeService;
@@ -32,38 +34,42 @@ namespace Recipebook.Controllers
         {
             return View(await _recipeService.GetRecipe(recipeId));
         }
-        
+
         [HttpGet]
-        [Authorize(Roles="User, Admin")]
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Add()
         {
-            ViewBag.CategoriesSelectList = _categoryService.GetCatogory().Select(i => new SelectListItem()
+            var model = new RecipeVM
             {
-                Text = i.Name,
-                Value = i.Id.ToString()
-            });
-            return View();
+                CategoriesList = _categoryService.GetCategories().Select(i => new SelectListItem()
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
+            };
+            return View(model);
         }
+
         [HttpPost]
-        [Authorize(Roles="User, Admin")]
-        [RequestSizeLimit(52428800)] 
+        [Authorize(Roles = "User, Admin")]
+        [RequestSizeLimit(52428800)]
         public async Task<IActionResult> Add(RecipeVM recipeVm)
         {
-            
             if (ModelState.IsValid)
-            {       
+            {
                 var userId = _userManager.GetUserId(HttpContext.User);
                 recipeVm.ApplicationUserId = userId;
+
                 var result = await _recipeService.AddRecipe(recipeVm);
                 return RedirectToAction("Index", "Home");
             }
-            ViewBag.CategoriesSelectList = _categoryService.GetCatogory().Select(i => new SelectListItem()
+
+            ViewBag.CategoriesSelectList = _categoryService.GetCategories().Select(i => new SelectListItem()
             {
                 Text = i.Name,
                 Value = i.Id.ToString()
             });
             return View();
         }
-
     }
 }

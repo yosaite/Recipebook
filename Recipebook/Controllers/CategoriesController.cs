@@ -13,7 +13,7 @@ namespace Recipebook.Controllers
         }
         public IActionResult Index()
         {
-            return View(categoryService.GetCatogory());
+            return View(categoryService.GetCategories());
         }
     }
 }

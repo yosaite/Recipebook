@@ -5,6 +5,6 @@ namespace Recipebook.Services
 {
     public interface ICategoryService
     {
-        public List<Category> GetCatogory();
+        public List<Category> GetCategories();
     }
 }

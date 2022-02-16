@@ -41,7 +41,12 @@ namespace Recipebook.Services
             {
                 return await GetRecipes();
             }
-            return await _dbContext.Recipes.Include(m => m.Images).Where(c => c.CategoryId == categoryId).ToListAsync();
+
+            return await _dbContext.RecipesCategories
+                .Include(m => m.Recipe)
+                .ThenInclude(i => i .Images)
+                .Where(c => c.CategoryId == categoryId)
+                .Select(p => p.Recipe).ToListAsync();
         }
 
         public async Task<List<Recipe>> GetRecipes(string userId)
@@ -56,19 +61,34 @@ namespace Recipebook.Services
         public async Task<RecipeVM> AddRecipe(RecipeVM recipeVM)
         {
             var recipe = _mapper.Map<Recipe>(recipeVM);
-            var path = Path.Combine(_environment.WebRootPath, "images");
-            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            foreach (var file in recipeVM.Files.Where(img=>img.Length > 0))
+            if (recipeVM.Files != null)
             {
-                var img = new Image(){Path = $"{Guid.NewGuid()}.{file.FileName.Split('.').Last()}"};
-                await using (var stream = File.Create(Path.Combine(path,img.Path)))
+                var path = Path.Combine(_environment.WebRootPath, "images");
+                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+                foreach (var file in recipeVM.Files.Where(img=>img.Length > 0))
                 {
-                    await file.CopyToAsync(stream);
+                    var img = new Image(){Path = $"{Guid.NewGuid()}.{file.FileName.Split('.').Last()}"};
+                    await using (var stream = File.Create(Path.Combine(path,img.Path)))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                    recipe.Images.Add(img);
                 }
-                recipe.Images.Add(img);
             }
+
             await _dbContext.Recipes.AddAsync(recipe);
             await _dbContext.SaveChangesAsync();
+
+            if (recipeVM.SelectedCategoriesIds == null) return recipeVM;
+            var categories = recipeVM.SelectedCategoriesIds.ConvertAll(m => new RecipeCategory()
+            {
+                RecipeId = recipe.Id,
+                CategoryId = m
+            });
+            
+            await _dbContext.RecipesCategories.AddRangeAsync(categories);
+            await _dbContext.SaveChangesAsync();
+
             return recipeVM;
         }
 

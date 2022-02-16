@@ -20,21 +20,15 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="lastName">Kategoria</label>
-                                <select asp-for="CategoryId" class="form-control" asp-items=@ViewBag.CategoriesSelectList >
-                                    <option value="">Wybierz...</option>              
-                                </select>
+                                <select multiple id="categories-select" asp-for="SelectedCategoriesIds" class="form-control" asp-items=@Model.CategoriesList></select>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="firstName">Czas przygotowania</label>
                                 <input type="number" asp-for="PreparationTime" class="form-control" placeholder="" value="" required>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="lastName">Czas gotowania</label>
-                                <input type="number" asp-for="CookingTime" class="form-control" id="lastName" placeholder="" value="" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="lastName">Ilość porcji</label>
                                 <input type="text" asp-for="Yields" class="form-control" id="lastName" placeholder="" value="" required>
                             </div>
@@ -67,40 +61,47 @@
 </div>
 
 @section Scripts{
-<script>
-$('#tags-input').tagsinput({
-  confirmKeys: [13],
-  allowDuplicates: true,
-  delimiterRegex: /[;]+/
-});
-$
-</script>
+    <script>
+    
+        $('#tags-input').tagsinput({
+          confirmKeys: [13],
+          allowDuplicates: true,
+          delimiterRegex: /[;]+/
+        });
+        
+        $(document).ready(function () {
+            $('#categories-select').selectpicker({
+                noneSelectedText: 'Wybierz kategorie',
+                liveSearch: true,
+                size: 5
+            });
+        });
+    
+    </script>
 }
+
 @section Styles
-{
+    {
     <style>
-/* bootstrap-tagsinput.css file - add in local */
+    /* bootstrap-tagsinput.css file - add in local */
 
-
-.bootstrap-tagsinput input {
-  width: 100%;
-  margin-bottom: 4px;
-}
-.bootstrap-tagsinput .tag {
-  margin-right: 2px;
-  font-size: 1.1rem;
-  color: white;
-}
-.bootstrap-tagsinput .tag [data-role="remove"] {
-  margin-left: 8px;
-  cursor: pointer;
-}
-.bootstrap-tagsinput .tag [data-role="remove"]:after {
-  content: "x";
-  padding: 0px 2px;
-}
-
-
+        .bootstrap-tagsinput input {
+          width: 100%;
+          margin-bottom: 4px;
+        }
+        .bootstrap-tagsinput .tag {
+          margin-right: 2px;
+          font-size: 1.1rem;
+          color: white;
+        }
+        .bootstrap-tagsinput .tag [data-role="remove"] {
+          margin-left: 8px;
+          cursor: pointer;
+        }
+        .bootstrap-tagsinput .tag [data-role="remove"]:after {
+          content: "x";
+          padding: 0px 2px;
+        }
 
     </style>
 }

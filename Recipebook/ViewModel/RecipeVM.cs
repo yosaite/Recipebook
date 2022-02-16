@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Recipebook.ViewModel
 {
@@ -24,13 +25,10 @@ namespace Recipebook.ViewModel
         [Required]
         public uint PreparationTime { get; set; }
         [Required]
-        public uint CookingTime { get; set; }
-        [Required]
         public uint Yields { get; set; }
-        [Required]
-        public ulong CategoryId { get; set; }
+        public List<ulong> SelectedCategoriesIds { get; set; } 
+        public IEnumerable<SelectListItem> CategoriesList { get; set; }
         public List<Image> Images { get; set; }
-        
         public List<IFormFile> Files { get; set; }
         public DateTime Created { get; set; }
         public string ApplicationUserId { get; set; }
