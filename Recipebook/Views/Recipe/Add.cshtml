@@ -11,7 +11,7 @@
             <div class="card text-black" style="border-radius: 25px;">
                 <div class="card-body p-md-5">
                     <h4 class="mb-3">Dodaj przepis</h4>
-                    <form asp-action="AddRecipe" method="post">
+                    <form asp-action="Add" method="post" enctype="multipart/form-data" >
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstName">Nazwa przepisu</label>
@@ -47,7 +47,7 @@
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="firstName">Składniki</label>
-                                <input id="tags-input" type="text" asp-for="Ingredients" class="form-control">
+                                <select multiple id="tags-input" type="text" asp-for="Ingredients" class="form-control"></select>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="firstName">Sposób przygotowania</label>
@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <label for="exampleFormControlFile1">Wybierz zdjęcia</label>
-                        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                        <input asp-for="Files" class="form-control-file" id="exampleFormControlFile1" type="file" multiple/>
                         <hr class="mb-4">
                         <button class="btn btn-primary btn-lg btn-block" type="submit">Dodaj przepis</button>
                     </form>
@@ -70,7 +70,37 @@
 <script>
 $('#tags-input').tagsinput({
   confirmKeys: [13],
+  allowDuplicates: true,
   delimiterRegex: /[;]+/
 });
+$
 </script>
+}
+@section Styles
+{
+    <style>
+/* bootstrap-tagsinput.css file - add in local */
+
+
+.bootstrap-tagsinput input {
+  width: 100%;
+  margin-bottom: 4px;
+}
+.bootstrap-tagsinput .tag {
+  margin-right: 2px;
+  font-size: 1.1rem;
+  color: white;
+}
+.bootstrap-tagsinput .tag [data-role="remove"] {
+  margin-left: 8px;
+  cursor: pointer;
+}
+.bootstrap-tagsinput .tag [data-role="remove"]:after {
+  content: "x";
+  padding: 0px 2px;
+}
+
+
+
+    </style>
 }

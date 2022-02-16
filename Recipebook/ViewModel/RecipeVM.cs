@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace Recipebook.ViewModel
 {
@@ -30,6 +30,8 @@ namespace Recipebook.ViewModel
         [Required]
         public ulong CategoryId { get; set; }
         public List<Image> Images { get; set; }
+        
+        public List<IFormFile> Files { get; set; }
         public DateTime Created { get; set; }
         public string ApplicationUserId { get; set; }
         public RecipeVM()

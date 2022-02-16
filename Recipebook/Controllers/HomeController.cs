@@ -29,49 +29,17 @@ namespace Recipebook.Controllers
             _categoryService = categoryService;
         }
 
-        public IActionResult Index(ulong categoryId = 0,string categoryName="")
+        public async Task<IActionResult> Index(ulong categoryId = 0,string categoryName="")
         {
             ViewBag.ListTitle = categoryName;
-            return View(_recipeService.GetRecipes(categoryId));
-        }
-        public IActionResult Recipe(ulong recipeId)
-        {
-            return View(_recipeService.GetRecipe(recipeId));
+            return View(await _recipeService.GetRecipes(categoryId));
         }
         [Authorize(Roles="User, Admin")]
-        public IActionResult UserRecipes()
+        public async Task<IActionResult> UserRecipes()
         {
             var userId = _userManager.GetUserId(HttpContext.User);
             ViewBag.ListTitle = "Moje przepisy";
-            return View("Index", _recipeService.GetRecipes(userId));
-        }
-        [HttpGet]
-        public IActionResult AddRecipe()
-        {
-            ViewBag.CategoriesSelectList = _categoryService.GetCatogory().Select(i => new SelectListItem()
-            {
-                Text = i.Name,
-                Value = i.Id.ToString()
-            });
-            return View();
-        }
-        [HttpPost]
-        public IActionResult AddRecipe(RecipeVM recipeVM)
-        {
-            Debug.WriteLine(recipeVM.Ingredients);
-            if (ModelState.IsValid)
-            {       
-                //var userId = _userManager.GetUserId(HttpContext.User);
-                //recipeVM.ApplicationUserId = userId;
-                //_recipeService.AddRecipe(recipeVM);
-                //return RedirectToAction("Index");
-            }
-            ViewBag.CategoriesSelectList = _categoryService.GetCatogory().Select(i => new SelectListItem()
-            {
-                Text = i.Name,
-                Value = i.Id.ToString()
-            });
-            return View();
+            return View("Index", await _recipeService.GetRecipes(userId));
         }
         public IActionResult Privacy()
         {

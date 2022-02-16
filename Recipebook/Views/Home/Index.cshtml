@@ -23,7 +23,7 @@ else
             <h6 class="display-4 text-center">@ViewBag.ListTitle</h6>
             @if (@ViewBag.ListTitle == "Moje przepisy")
             {
-                <a asp-controller="Home" asp-action="AddRecipe" class="btn btn-success lef text-white"><i class="fas fa-plus"></i> Dodaj przepis</a>
+                <a asp-controller="Recipe" asp-action="Add" class="btn btn-success lef text-white"><i class="fas fa-plus"></i> Dodaj przepis</a>
             }
         </div>
         @if (@ViewBag.ListTitle != "")
@@ -37,17 +37,17 @@ else
                     <div class="card pop mb-4 box-shadow flex-fill">
                         @if (@item.Images.Count != 0)
                         {
-                            <img class="card-img-top" alt="Card image cap" src="@item.Images.First().Path">
+                            <img class="card-img-top" alt="Card image cap" src=@($"/images/{@item.Images.First().Path}") >
                         }
                         else
                         {
                             <img class="card-img-top" alt="Card image cap" src="https://kombit.net.pl/wp-content/themes/consultix/images/no-image-found-360x250.png">
                         }
                         <div class="card-body">
-                            <h5 class="card-title"><a asp-action="Recipe" asp-route-recipeId="@item.Id" class="des stretched-link">@item.Name</a></h5>
+                            <h5 class="card-title"><a asp-controller="Recipe" asp-action="Recipe" asp-route-recipeId="@item.Id" class="des stretched-link">@item.Name</a></h5>
                             @if (@item.Description.Length > 100)
                             {
-                                <p class="card-text">@item.Description.Substring(0,100)...</p>
+                                <p class="card-text">@(item.Description[..100])...</p>
                             }
                             else
                             {

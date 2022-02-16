@@ -1,58 +1,75 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Recipebook.Data;
 using Recipebook.Models;
 using Recipebook.ViewModel;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Recipebook.Services
 {
     public class RecipeService: IRecipeService
     {
-        private readonly ApplicationDbContext dbContext;
-        private readonly IMapper mapper;
-
-        public RecipeService(ApplicationDbContext dbContext, IMapper mapper)
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _environment;
+        public RecipeService(ApplicationDbContext dbContext, IMapper mapper, IWebHostEnvironment environment)
         {
-            this.dbContext = dbContext;
-            this.mapper = mapper;
+            _dbContext = dbContext;
+            _mapper = mapper;
+            _environment = environment;
         }
-        public List<Recipe> GetRecipes()
+        public async Task<List<Recipe>> GetRecipes()
         {
-            var list = dbContext.Recipes.Include(m => m.Images).OrderByDescending(m => m.TotalRatingValue/m.TotalUserRating).ToList();
+            var list = await _dbContext.Recipes.Include(m => m.Images).OrderByDescending(m => m.TotalRatingValue/m.TotalUserRating).ToListAsync();
             return list;
         }
 
-        public Recipe GetRecipe(ulong id)
+        public async Task<Recipe> GetRecipe(ulong id)
         {
-           return dbContext.Recipes.Where(r => r.Id == id).Include(m => m.Images).Include(m => m.ApplicationUser).FirstOrDefault();
+           return await _dbContext.Recipes.Where(r => r.Id == id).Include(m => m.Images).Include(m => m.ApplicationUser).FirstOrDefaultAsync();
         }
 
-        public List<Recipe> GetRecipes(ulong categoryId)
+        public async Task<List<Recipe>> GetRecipes(ulong categoryId)
         {
             if(categoryId == 0)
             {
-                return GetRecipes();
+                return await GetRecipes();
             }
-            return dbContext.Recipes.Include(m => m.Images).Where(c => c.CategoryId == categoryId).ToList();
+            return await _dbContext.Recipes.Include(m => m.Images).Where(c => c.CategoryId == categoryId).ToListAsync();
         }
 
-        public List<Recipe> GetRecipes(string userId)
+        public async Task<List<Recipe>> GetRecipes(string userId)
         { 
             if(userId is null){
-                return GetRecipes();
+                return await GetRecipes();
             }
-            return dbContext.Recipes.Include(m => m.Images).Include(m => m.ApplicationUser).Where(c => c.ApplicationUserId == userId).ToList();
+            return await _dbContext.Recipes.Include(m => m.Images).Include(m => m.ApplicationUser).Where(c => c.ApplicationUserId == userId).ToListAsync();
 
         }
 
-        public void AddRecipe(RecipeVM recipeVM)
+        public async Task<RecipeVM> AddRecipe(RecipeVM recipeVM)
         {
-            var recipe = mapper.Map<Recipe>(recipeVM);
-            dbContext.Recipes.Add(recipe);
-            dbContext.SaveChanges();
+            var recipe = _mapper.Map<Recipe>(recipeVM);
+            var path = Path.Combine(_environment.WebRootPath, "images");
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            foreach (var file in recipeVM.Files.Where(img=>img.Length > 0))
+            {
+                var img = new Image(){Path = $"{Guid.NewGuid()}.{file.FileName.Split('.').Last()}"};
+                await using (var stream = File.Create(Path.Combine(path,img.Path)))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                recipe.Images.Add(img);
+            }
+            await _dbContext.Recipes.AddAsync(recipe);
+            await _dbContext.SaveChangesAsync();
+            return recipeVM;
         }
 
     }

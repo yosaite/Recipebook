@@ -21,7 +21,7 @@
                             {
 
                                 <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
-                                    <img class="d-block w-100 rec" src="@img.Path">
+                                    <img class="d-block w-100 rec" src=@($"/images/{@img.Path}") alt="">
                                 </div>
                                 first = false;
                             }

@@ -1,15 +1,16 @@
 ﻿using Recipebook.Models;
 using Recipebook.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Recipebook.Services
 {
     public interface IRecipeService
     {
-        public List<Recipe> GetRecipes();
-        public Recipe GetRecipe(ulong id);
-        public List<Recipe> GetRecipes(ulong categoryId);
-        public List<Recipe> GetRecipes(string userId);
-        public void AddRecipe(RecipeVM recipeVM);
+        Task<List<Recipe>> GetRecipes();
+        Task<Recipe> GetRecipe(ulong id);
+        Task<List<Recipe>> GetRecipes(ulong categoryId);
+        Task<List<Recipe>> GetRecipes(string userId);
+        Task<RecipeVM> AddRecipe(RecipeVM recipeVM);
     }
 }
