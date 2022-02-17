@@ -71,5 +71,22 @@ namespace Recipebook.Controllers
             });
             return View();
         }
+
+        [HttpGet]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> Delete(ulong id)
+        {
+            var recipe = await _recipeService.GetRecipe(id);
+            if (recipe == null) return RedirectToAction("Index", "Home");
+            
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (recipe.ApplicationUserId == _userManager.GetUserId(HttpContext.User) ||
+                await _userManager.IsInRoleAsync(user, "Admin"))
+            {
+                await _recipeService.DeleteRecipe(id);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }

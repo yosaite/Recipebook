@@ -6,7 +6,14 @@
 }
 
 <div class="receipe-post-area section-padding-80">
-
+    <div class="btn-group-fab" role="group" aria-label="FAB Menu">
+        <div>
+            <button type="button" class="btn btn-main btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Menu"><i class="fa fa-bars"></i></button>
+            <a asp-controller="Recipe" asp-action="Delete" asp-route-id="@Model.Id" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Usuń"><i class="fa-solid fa-xmark"></i></a>
+            <a href="#" type="button" class="btn btn-sub btn-info has-tooltip" data-toggle="tooltip" data-placement="left" title="Edytuj"><i class="fa-solid fa-pen-to-square"></i></a>
+        </div>
+    </div>
+   
     <!-- Receipe Slider -->
     <div class="container">
         <div class="row">
@@ -20,7 +27,7 @@
                             @foreach (var img in @Model.Images)
                             {
 
-                                <div class="carousel-item @(first?Html.Raw("active"):Html.Raw(""))">
+                                <div class="carousel-item @(first ? Html.Raw("active") : Html.Raw(""))">
                                     <img class="d-block w-100 rec" src=@($"/images/{@img.Path}") alt="">
                                 </div>
                                 first = false;
@@ -86,7 +93,17 @@
                     <div class="col-12 col-lg-8">
                         <div class="single-preparation-step">
                             <h4>Sposób przygotowania</h4>
-                            <p>@Model.Directions</p>
+                            <br/>
+                            @foreach (var (item,index) in Model.Directions.Split("\r\n\r\n").Select((value, i) => (value, i)))
+                            {
+                                <div class="row">
+                                    <h2 class="col-1">@(index + 1)</h2>
+                                    <div class="col">
+                                        <p>@item</p>
+                                    </div>
+                                </div>
+                                <hr/>
+                            }
                         </div>
                     </div>
 
@@ -94,9 +111,9 @@
                     <div class="col-12 col-lg-4 l-bor-2 pl-4">
                         <div class="ingredients">
                             <h4>Składniki</h4>
-                            @foreach (var item in Model.Ingredients.Select((value,index)=>(value,index)))
+                            @foreach (var item in Model.Ingredients.Select((value, index) => (value,index)))
                             {
-                                <div class="custom-control custom-checkbox">
+                                <div class="custom-control custom-checkbox spac">
                                     <input type="checkbox" class="custom-control-input" id=@(item.index.ToString())>
                                     <label class="custom-control-label" for=@(item.index.ToString())>@item.value</label>
                                 </div>
@@ -109,8 +126,23 @@
     </div>
 </div>
 
+@section Scripts
+{
+    <script>
+        $(function() {
+          $('.btn-group-fab').on('click', '.btn', function() {
+            $('.btn-group-fab').toggleClass('active');
+          });
+          $('has-tooltip').tooltip();
+        });
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+}
+
 @section Styles{
-<style>
+    <style>
     .rec {
         height: 400px;
         width: 70%;
@@ -137,5 +169,61 @@
     .fa-chevron-right {
         color: gray;
     }
+    
+    p
+    {
+        margin-bottom: 0 !important;
+    }
+    
+    .spac
+    {
+        margin-bottom: 7px;
+    }
+    
+    body { width: 100%; height: 100%; }
+    .btn-group-fab {
+      position: fixed;
+      width: 50px;
+      height: auto;
+      right: 20px; bottom: 20px;
+    }
+    .btn-group-fab div {
+      position: relative; width: 100%;
+      height: auto;
+    }
+    .btn-group-fab .btn {
+      position: absolute;
+      bottom: 0;
+      border-radius: 50%;
+      display: block;
+      margin-bottom: 4px;
+      width: 40px; height: 40px;
+      margin: 4px auto;
+    }
+    .btn-group-fab .btn-main {
+      width: 50px; height: 50px;
+      right: 50%; margin-right: -25px;
+      z-index: 9;
+    }
+    .btn-group-fab .btn-sub {
+      bottom: 0; z-index: 8;
+      right: 50%;
+      margin-right: -20px;
+      -webkit-transition: all 2s;
+      transition: all 0.5s;
+    }
+    .btn-group-fab.active .btn-sub:nth-child(2) {
+      bottom: 60px;
+    }
+    .btn-group-fab.active .btn-sub:nth-child(3) {
+      bottom: 110px;
+    }
+    .btn-group-fab.active .btn-sub:nth-child(4) {
+      bottom: 160px;
+    }
+    .btn-group-fab .btn-sub:nth-child(5) {
+      bottom: 210px;
+    }
+    
 </style>
- }
+}

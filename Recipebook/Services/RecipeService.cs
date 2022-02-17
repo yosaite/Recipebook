@@ -92,5 +92,16 @@ namespace Recipebook.Services
             return recipeVM;
         }
 
+        public async Task DeleteRecipe(ulong id)
+        {
+            var recipe = await _dbContext.Recipes.Where(c => c.Id == id).FirstOrDefaultAsync();
+            if (recipe != null)
+            {
+                _dbContext.Recipes.Remove(recipe);
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+
     }
 }

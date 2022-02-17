@@ -12,5 +12,6 @@ namespace Recipebook.Services
         Task<List<Recipe>> GetRecipes(ulong categoryId);
         Task<List<Recipe>> GetRecipes(string userId);
         Task<RecipeVM> AddRecipe(RecipeVM recipeVM);
+        Task DeleteRecipe(ulong id);
     }
 }

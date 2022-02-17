@@ -19,7 +19,9 @@
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="lastName">Kategoria</label>
+                                <label for="lastName">Kategoria     
+                                    <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Można dodać więcej niż 1 kategorię"></i>
+                                    </label>
                                 <select multiple id="categories-select" asp-for="SelectedCategoriesIds" class="form-control" asp-items=@Model.CategoriesList></select>
                             </div>
                         </div>
@@ -40,11 +42,15 @@
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label for="firstName">Składniki</label>
+                                <label for="firstName">Składniki     
+                                    <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Aby dodać pojedynczy składnik po jego wpisaniu należy wcisąć klawisz Enter"></i>
+                                    </label>
                                 <select multiple id="tags-input" type="text" asp-for="Ingredients" class="form-control"></select>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label for="firstName">Sposób przygotowania</label>
+                                <label for="firstName">Sposób przygotowani     
+                                    <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Aby podzielić przepis na korki po każdym kroku należy wcisnąć 2 razy klawisz Enter"></i>
+                                    </label>
                                 <textarea class="form-control" aria-label="With textarea" asp-for="Directions" rows="10"></textarea>
                                 <span asp-validation-for="Directions" class="text-danger"></span>
                             </div>
@@ -76,6 +82,10 @@
                 size: 5
             });
         });
+        
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
     
     </script>
 }
