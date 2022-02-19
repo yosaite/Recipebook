@@ -13,7 +13,7 @@ namespace Recipebook.Models
         public Image? Image { get; set;}
         [ForeignKey("Image")]
         public ulong? ImageId { get; set; }
-        public virtual ICollection<RecipeCategory> Recipes { get; set; }
+        public virtual ICollection<Recipe> Recipes { get; set; }
 
     }
 }

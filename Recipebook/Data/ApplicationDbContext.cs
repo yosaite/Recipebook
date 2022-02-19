@@ -15,7 +15,6 @@ namespace Recipebook.Data
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Image> Images { get; set; }
-        public DbSet<RecipeCategory> RecipesCategories { get; set; }
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -38,12 +37,6 @@ namespace Recipebook.Data
                 .Property(e => e.Ingredients)
                 .Metadata
                 .SetValueComparer(valueComparer);
-            builder
-                .Entity<RecipeCategory>()
-                .HasKey(m =>
-                new{
-                    m.RecipeId, m.CategoryId
-                });
 
         }
     }

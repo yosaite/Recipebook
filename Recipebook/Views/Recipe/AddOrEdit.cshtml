@@ -1,5 +1,6 @@
 ﻿@using Recipebook.ViewModel
 @using Microsoft.CodeAnalysis.Differencing
+@using System.Linq
 @model RecipeVM
 
 @if (@ViewBag.ListTitle != "")
@@ -16,9 +17,16 @@ else
         <div class="col-lg-12 col-xl-11">
             <div class="card text-black" style="border-radius: 25px;">
                 <div class="card-body p-md-5">
-                    <h4 class="mb-3">Dodaj przepis</h4>
+                    @if (ViewBag.Edit)
+                    {
+                        <h4 class="mb-3">Edytuj przepis</h4>
+                    }
+                    else
+                    {
+                        <h4 class="mb-3">Dodaj przepis</h4>
+                    }
                     <form asp-action="AddOrEdit" method="post" enctype="multipart/form-data">
-                        <input asp-for="Id" type="hidden" class="form-control" />
+                        <input asp-for="Id" type="hidden" class="form-control"/>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstName">Nazwa przepisu</label>
@@ -26,7 +34,8 @@ else
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="lastName">Kategoria
+                                <label for="lastName">
+                                    Kategoria
                                     <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Można dodać więcej niż 1 kategorię"></i>
                                 </label>
                                 <select multiple id="categories-select" asp-for="SelectedCategoriesIds" class="form-control" asp-items=@Model.CategoriesList></select>
@@ -39,7 +48,7 @@ else
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="lastName">Ilość porcji</label>
-                                <input type="text" asp-for="Yields" class="form-control" id="lastName" placeholder="" required>
+                                <input type="number" asp-for="Yields" class="form-control" id="lastName" placeholder="" required>
                             </div>
                         </div>
                         <div class="row">
@@ -49,20 +58,39 @@ else
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label for="firstName">Składniki
+                                <label for="firstName">
+                                    Składniki
                                     <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Aby dodać pojedynczy składnik po jego wpisaniu należy wcisąć klawisz Enter"></i>
                                 </label>
                                 <select multiple id="tags-input" type="text" asp-for="Ingredients" class="form-control"></select>
 
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label for="firstName">Sposób przygotowani
+                                <label for="firstName">
+                                    Sposób przygotowani
                                     <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Aby podzielić przepis na korki po każdym kroku należy wcisnąć 2 razy klawisz Enter"></i>
                                 </label>
                                 <textarea class="form-control" aria-label="With textarea" asp-for="Directions" rows="10"></textarea>
                                 <span asp-validation-for="Directions" class="text-danger"></span>
                             </div>
                         </div>
+                        @if (@ViewBag.Edit && @Model.Images is { })
+                        {
+                            <div class="row">
+                                @for (var i = 0; i < @Model.Images.Count; i++)
+                                {
+                                    <div class="col-md-4 d-flex" id="image-@i">
+                                        <div class="card mb-4 box-shadow flex-fill" style="width: 18rem;">
+                                            <input type="hidden" class="form-control" name="Images[@i].Id" value="@Model.Images[i].Id"/>
+                                            <img class="card-img" src=@($"/images/{@Model.Images[i].Path}") alt="">
+                                            <div class="card-img-overlay ali">
+                                                <button class="btn btn-danger" onclick="RemoveImage(@i)">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
                         <label for="exampleFormControlFile1">Wybierz zdjęcia</label>
                         <input asp-for="Files" class="form-control-file" id="exampleFormControlFile1" type="file" multiple/>
                         <hr class="mb-4">
@@ -89,7 +117,6 @@ else
                 liveSearch: true,
                 size: 5
             });
-
             $(function () {
                 let jsonData = @Html.Raw(Json.Serialize(Model))
                 for (let ingredient in jsonData.ingredients){
@@ -102,7 +129,9 @@ else
             });
             
         });
-        
+        function RemoveImage(id){
+            $('#'+'image-'+id).remove()
+        }
         $(function () {
           $('[data-toggle="tooltip"]').tooltip()
         })
@@ -111,7 +140,7 @@ else
 }
 
 @section Styles
-    {
+{
     <style>
     /* bootstrap-tagsinput.css file - add in local */
 
@@ -131,6 +160,14 @@ else
         .bootstrap-tagsinput .tag [data-role="remove"]:after {
           content: "x";
           padding: 0px 2px;
+        }
+        .card-img {
+            height: 225px;
+            width: 100%;
+            object-fit: cover;
+        }
+        .ali{
+        text-align: right;
         }
 
     </style>

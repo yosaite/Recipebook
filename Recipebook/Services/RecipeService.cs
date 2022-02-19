@@ -18,11 +18,14 @@ namespace Recipebook.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
-        public RecipeService(ApplicationDbContext dbContext, IMapper mapper, IWebHostEnvironment environment)
+        private readonly IFileService _fileService;
+
+        public RecipeService(ApplicationDbContext dbContext, IMapper mapper, IWebHostEnvironment environment, IFileService fileService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _environment = environment;
+            _fileService = fileService;
         }
         public async Task<List<Recipe>> GetRecipes()
         {
@@ -46,12 +49,12 @@ namespace Recipebook.Services
             {
                 return await GetRecipes();
             }
-
-            return await _dbContext.RecipesCategories
-                .Include(m => m.Recipe)
-                .ThenInclude(i => i .Images)
-                .Where(c => c.CategoryId == categoryId)
-                .Select(p => p.Recipe).ToListAsync();
+            
+            return await _dbContext.Categories
+                .Include(c => c.Recipes)
+                .ThenInclude(m => m.Images)
+                .Where(c => c.Id == categoryId)
+                .SelectMany(c => c.Recipes).ToListAsync();
         }
 
         public async Task<List<Recipe>> GetRecipes(string userId)
@@ -63,38 +66,17 @@ namespace Recipebook.Services
 
         }
 
-        public async Task<RecipeVM> AddRecipe(RecipeVM recipeVM)
+        public async Task<Recipe> AddRecipe(RecipeVM recipeVm)
         {
-            var recipe = _mapper.Map<Recipe>(recipeVM);
-            if (recipeVM.Files != null)
-            {
-                var path = Path.Combine(_environment.WebRootPath, "images");
-                if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-                foreach (var file in recipeVM.Files.Where(img=>img.Length > 0))
-                {
-                    var img = new Image(){Path = $"{Guid.NewGuid()}.{file.FileName.Split('.').Last()}"};
-                    await using (var stream = File.Create(Path.Combine(path,img.Path)))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-                    recipe.Images.Add(img);
-                }
-            }
-
+            var recipe = _mapper.Map<Recipe>(recipeVm);
+            
+            recipe.Images = await _fileService.SaveImages(recipeVm.Files);
+            recipe.Categories = await _dbContext.Categories
+                .Where(c => recipeVm.SelectedCategoriesIds.Contains(c.Id))
+                .ToListAsync();
             await _dbContext.Recipes.AddAsync(recipe);
             await _dbContext.SaveChangesAsync();
-
-            if (recipeVM.SelectedCategoriesIds == null) return recipeVM;
-            var categories = recipeVM.SelectedCategoriesIds.ConvertAll(m => new RecipeCategory()
-            {
-                RecipeId = recipe.Id,
-                CategoryId = m
-            });
-            
-            await _dbContext.RecipesCategories.AddRangeAsync(categories);
-            await _dbContext.SaveChangesAsync();
-
-            return recipeVM;
+            return recipe;
         }
 
         public async Task DeleteRecipe(ulong id)
@@ -108,38 +90,32 @@ namespace Recipebook.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task EditRecipe(RecipeVM recipeVm)
+        public async Task<Recipe> EditRecipe(RecipeVM recipeVm)
         {
-            // var recipe = _mapper.Map<Recipe>(recipeVm);
-            // if (recipeVm.Files != null)
-            // {
-            //     var path = Path.Combine(_environment.WebRootPath, "images");
-            //     if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            //     foreach (var file in recipeVm.Files.Where(img=>img.Length > 0))
-            //     {
-            //         var img = new Image(){Path = $"{Guid.NewGuid()}.{file.FileName.Split('.').Last()}"};
-            //         await using (var stream = File.Create(Path.Combine(path,img.Path)))
-            //         {
-            //             await file.CopyToAsync(stream);
-            //         }
-            //         recipe.Images.Add(img);
-            //     }
-            // }
-            //
-            // await _dbContext.Recipes.AddAsync(recipe);
-            // await _dbContext.SaveChangesAsync();
-            //
-            // if (recipeVm.SelectedCategoriesIds == null) return recipeVm;
-            // var categories = recipeVm.SelectedCategoriesIds.ConvertAll(m => new RecipeCategory()
-            // {
-            //     RecipeId = recipe.Id,
-            //     CategoryId = m
-            // });
-            //
-            // await _dbContext.RecipesCategories.AddRangeAsync(categories);
-            // await _dbContext.SaveChangesAsync();
-            //
-            // return recipeVm;
+            var recipe = _mapper.Map<Recipe>(recipeVm);
+            var dbRecipe = await _dbContext.Recipes.Where(r => r.Id == recipe.Id)
+                .Include(r=>r.Categories)
+                .Include(r=>r.Images)
+                .FirstOrDefaultAsync();
+            if (dbRecipe == null) return new Recipe();
+
+            dbRecipe.Name = recipe.Name;
+            dbRecipe.Categories = await _dbContext.Categories.Where(r => recipeVm.SelectedCategoriesIds.Contains(r.Id)).ToListAsync();
+            dbRecipe.PreparationTime = recipe.PreparationTime;
+            dbRecipe.Yields = recipe.Yields;
+            dbRecipe.Description = recipe.Description;
+            dbRecipe.Ingredients = recipe.Ingredients;
+            dbRecipe.Directions = recipe.Directions;
+            dbRecipe.Images.RemoveAll(i => !recipe.Images.Select(c => c.Id).ToList().Contains(i.Id));
+
+            if (recipeVm.Files != null && recipeVm.Files.Any())
+            {
+                var savedImages = await _fileService.SaveImages(recipeVm.Files);
+                dbRecipe.Images.AddRange(savedImages);
+            }
+            _dbContext.Recipes.Update(dbRecipe);
+            await _dbContext.SaveChangesAsync();
+            return dbRecipe;
         }
     }
 }

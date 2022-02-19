@@ -50,6 +50,7 @@ namespace Recipebook.Controllers
                     Value = i.Id.ToString()
                 })
             };
+            ViewBag.Edit = false;
             return View("AddOrEdit",model);
         }
         
@@ -59,7 +60,7 @@ namespace Recipebook.Controllers
         {
             var recipe = await _recipeService.GetRecipe(recipeId);
             var recipeVm = _mapper.Map<RecipeVM>(recipe);
-            recipeVm.SelectedCategoriesIds = recipe.Categories.Select(m => m.CategoryId).ToList();
+            recipeVm.SelectedCategoriesIds = recipe.Categories.Select(m => m.Id).ToList();
             recipeVm.CategoriesList = _categoryService.GetCategories().Select(i => new SelectListItem()
             {
                 Text = i.Name,
@@ -80,33 +81,34 @@ namespace Recipebook.Controllers
             {
                 var userId = _userManager.GetUserId(HttpContext.User);
                 recipeVm.ApplicationUserId = userId;
-                if (recipeVm.Id == 0)
+                if (recipeVm.Id != 0)
                 {
-                    await _recipeService.AddRecipe(recipeVm);
+                    var recipe = await _recipeService.EditRecipe(recipeVm);
+                    return RedirectToAction("Recipe", "Recipe", new {recipeId = recipe.Id});
                 }
                 else
                 { 
-                    await _recipeService.EditRecipe(recipeVm);
+                    var recipe = await _recipeService.AddRecipe(recipeVm);
+                    return RedirectToAction("Recipe", "Recipe", new {recipeId = recipe.Id});
                 }
-                
-                return RedirectToAction("Index", "Home");
             }
-            
-            return View();
+            ViewBag.Edit = false;
+            return View("AddOrEdit",recipeVm);
         }
 
+        
         [HttpGet]
         [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> Delete(ulong id)
+        public async Task<IActionResult> Delete(ulong recipeId)
         {
-            var recipe = await _recipeService.GetRecipe(id);
+            var recipe = await _recipeService.GetRecipe(recipeId);
             if (recipe == null) return RedirectToAction("Index", "Home");
             
             var user = await _userManager.GetUserAsync(HttpContext.User);
             if (recipe.ApplicationUserId == _userManager.GetUserId(HttpContext.User) ||
                 await _userManager.IsInRoleAsync(user, "Admin"))
             {
-                await _recipeService.DeleteRecipe(id);
+                await _recipeService.DeleteRecipe(recipeId);
             }
             return RedirectToAction("UserRecipes", "Home");
         }

@@ -27,21 +27,21 @@ else
             <hr/>
         }
         <div class="row">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Recipe" asp-action="Add" class="btn-group-fab" role="group" aria-label="FAB Menu">
+                    <div>
+                        <button type="button" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="left" title="Dodaj przepis">
+                            <i class="fa-solid fa-plus fa-2xl"></i>
+                        </button>
+                    </div>
+                </a>
+            }
             @foreach (var item in Model)
             {
                 <div class="col-md-4 d-flex">
-                    @if (User.Identity != null && User.Identity.IsAuthenticated)
-                    {
-                        <a asp-controller="Recipe" asp-action="Add" class="btn-group-fab" role="group" aria-label="FAB Menu">
-                            <div>
-                                <button type="button" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="left" title="Dodaj przepis">
-                                    <i class="fa-solid fa-plus fa-2xl"></i>
-                                </button>
-                            </div>
-                        </a>
-                    }
                     <div class="card pop mb-4 box-shadow flex-fill">
-                        @if (@item.Images.Count != 0)
+                        @if (@item.Images != null && @item.Images.Count != 0)
                         {
                             <img class="card-img-top" alt="Card image cap" src=@($"/images/{@item.Images.First().Path}")>
                         }

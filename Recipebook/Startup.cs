@@ -37,6 +37,7 @@ namespace Recipebook
                 );
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IRecipeService, RecipeService>();
+            services.AddScoped<IFileService, FileService>();
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
