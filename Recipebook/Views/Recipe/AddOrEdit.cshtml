@@ -1,7 +1,13 @@
 ﻿@using Recipebook.ViewModel
+@using Microsoft.CodeAnalysis.Differencing
 @model RecipeVM
 
-@{
+@if (@ViewBag.ListTitle != "")
+{
+    ViewData["Title"] = @ViewBag.ListTitle;
+}
+else
+{
     ViewData["Title"] = "Dodaj przepis";
 }
 
@@ -11,46 +17,48 @@
             <div class="card text-black" style="border-radius: 25px;">
                 <div class="card-body p-md-5">
                     <h4 class="mb-3">Dodaj przepis</h4>
-                    <form asp-action="Add" method="post" enctype="multipart/form-data" >
+                    <form asp-action="AddOrEdit" method="post" enctype="multipart/form-data">
+                        <input asp-for="Id" type="hidden" class="form-control" />
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstName">Nazwa przepisu</label>
-                                <input asp-for="Name" class="form-control" placeholder="" value="" required>
+                                <input asp-for="Name" class="form-control" placeholder="" required>
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="lastName">Kategoria     
+                                <label for="lastName">Kategoria
                                     <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Można dodać więcej niż 1 kategorię"></i>
-                                    </label>
+                                </label>
                                 <select multiple id="categories-select" asp-for="SelectedCategoriesIds" class="form-control" asp-items=@Model.CategoriesList></select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="firstName">Czas przygotowania</label>
-                                <input type="number" asp-for="PreparationTime" class="form-control" placeholder="" value="" required>
+                                <input type="number" asp-for="PreparationTime" class="form-control" placeholder="" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="lastName">Ilość porcji</label>
-                                <input type="text" asp-for="Yields" class="form-control" id="lastName" placeholder="" value="" required>
+                                <input type="text" asp-for="Yields" class="form-control" id="lastName" placeholder="" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 mb-3">
-                                <label for="firstName">Opis przepisu</label>
-                                <textarea class="form-control" aria-label="With textarea" asp-for="Description" rows="10"></textarea>
+                                <label for="description">Opis przepisu</label>
+                                <textarea id="description" class="form-control" aria-label="With textarea" asp-for="Description" rows="10"></textarea>
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label for="firstName">Składniki     
+                                <label for="firstName">Składniki
                                     <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Aby dodać pojedynczy składnik po jego wpisaniu należy wcisąć klawisz Enter"></i>
-                                    </label>
+                                </label>
                                 <select multiple id="tags-input" type="text" asp-for="Ingredients" class="form-control"></select>
+
                             </div>
                             <div class="col-md-12 mb-3">
-                                <label for="firstName">Sposób przygotowani     
+                                <label for="firstName">Sposób przygotowani
                                     <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Aby podzielić przepis na korki po każdym kroku należy wcisnąć 2 razy klawisz Enter"></i>
-                                    </label>
+                                </label>
                                 <textarea class="form-control" aria-label="With textarea" asp-for="Directions" rows="10"></textarea>
                                 <span asp-validation-for="Directions" class="text-danger"></span>
                             </div>
@@ -81,12 +89,24 @@
                 liveSearch: true,
                 size: 5
             });
+
+            $(function () {
+                let jsonData = @Html.Raw(Json.Serialize(Model))
+                for (let ingredient in jsonData.ingredients){
+                    $('#tags-input').tagsinput('add', jsonData.ingredients[ingredient])
+                }
+            });
+            
+            $('#tags-input').on('itemRemoved', function (event){
+               console.log(event.item) 
+            });
+            
         });
         
         $(function () {
           $('[data-toggle="tooltip"]').tooltip()
         })
-    
+
     </script>
 }
 

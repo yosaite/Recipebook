@@ -9,6 +9,7 @@ namespace Recipebook.ViewModel
 {
     public class RecipeVM
     {
+        public ulong Id { get; set; }
         [Required]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Nazwa musi mieć pomiędzy {2} - {1} znaków.")]
         [DataType(DataType.Text)]

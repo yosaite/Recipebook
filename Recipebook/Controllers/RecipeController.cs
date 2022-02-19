@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,14 +20,16 @@ namespace Recipebook.Controllers
         private readonly IRecipeService _recipeService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ICategoryService _categoryService;
+        private readonly IMapper _mapper;
 
         public RecipeController(ILogger<RecipeController> logger, IRecipeService recipeService,
-            UserManager<ApplicationUser> userManager, ICategoryService categoryService)
+            UserManager<ApplicationUser> userManager, ICategoryService categoryService, IMapper mapper)
         {
             _logger = logger;
             _recipeService = recipeService;
             _userManager = userManager;
             _categoryService = categoryService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -47,28 +50,48 @@ namespace Recipebook.Controllers
                     Value = i.Id.ToString()
                 })
             };
-            return View(model);
+            return View("AddOrEdit",model);
+        }
+        
+        [HttpGet]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> Edit(ulong recipeId)
+        {
+            var recipe = await _recipeService.GetRecipe(recipeId);
+            var recipeVm = _mapper.Map<RecipeVM>(recipe);
+            recipeVm.SelectedCategoriesIds = recipe.Categories.Select(m => m.CategoryId).ToList();
+            recipeVm.CategoriesList = _categoryService.GetCategories().Select(i => new SelectListItem()
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            
+            ViewBag.ListTitle = $"Edytuj przepis - {recipe.Name}";
+            ViewBag.Edit = true;
+            return View("AddOrEdit",recipeVm);
         }
 
         [HttpPost]
         [Authorize(Roles = "User, Admin")]
         [RequestSizeLimit(52428800)]
-        public async Task<IActionResult> Add(RecipeVM recipeVm)
+        public async Task<IActionResult> AddOrEdit(RecipeVM recipeVm)
         {
             if (ModelState.IsValid)
             {
                 var userId = _userManager.GetUserId(HttpContext.User);
                 recipeVm.ApplicationUserId = userId;
-
-                var result = await _recipeService.AddRecipe(recipeVm);
+                if (recipeVm.Id == 0)
+                {
+                    await _recipeService.AddRecipe(recipeVm);
+                }
+                else
+                { 
+                    await _recipeService.EditRecipe(recipeVm);
+                }
+                
                 return RedirectToAction("Index", "Home");
             }
-
-            ViewBag.CategoriesSelectList = _categoryService.GetCategories().Select(i => new SelectListItem()
-            {
-                Text = i.Name,
-                Value = i.Id.ToString()
-            });
+            
             return View();
         }
 
@@ -85,7 +108,7 @@ namespace Recipebook.Controllers
             {
                 await _recipeService.DeleteRecipe(id);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("UserRecipes", "Home");
         }
 
     }

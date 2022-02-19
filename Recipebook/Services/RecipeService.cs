@@ -32,7 +32,12 @@ namespace Recipebook.Services
 
         public async Task<Recipe> GetRecipe(ulong id)
         {
-           return await _dbContext.Recipes.Where(r => r.Id == id).Include(m => m.Images).Include(m => m.ApplicationUser).FirstOrDefaultAsync();
+           return await _dbContext.Recipes
+               .Where(r => r.Id == id)
+               .Include(m => m.Images)
+               .Include(m => m.ApplicationUser)
+               .Include(m => m.Categories)
+               .FirstOrDefaultAsync();
         }
 
         public async Task<List<Recipe>> GetRecipes(ulong categoryId)
@@ -103,5 +108,38 @@ namespace Recipebook.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task EditRecipe(RecipeVM recipeVm)
+        {
+            // var recipe = _mapper.Map<Recipe>(recipeVm);
+            // if (recipeVm.Files != null)
+            // {
+            //     var path = Path.Combine(_environment.WebRootPath, "images");
+            //     if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            //     foreach (var file in recipeVm.Files.Where(img=>img.Length > 0))
+            //     {
+            //         var img = new Image(){Path = $"{Guid.NewGuid()}.{file.FileName.Split('.').Last()}"};
+            //         await using (var stream = File.Create(Path.Combine(path,img.Path)))
+            //         {
+            //             await file.CopyToAsync(stream);
+            //         }
+            //         recipe.Images.Add(img);
+            //     }
+            // }
+            //
+            // await _dbContext.Recipes.AddAsync(recipe);
+            // await _dbContext.SaveChangesAsync();
+            //
+            // if (recipeVm.SelectedCategoriesIds == null) return recipeVm;
+            // var categories = recipeVm.SelectedCategoriesIds.ConvertAll(m => new RecipeCategory()
+            // {
+            //     RecipeId = recipe.Id,
+            //     CategoryId = m
+            // });
+            //
+            // await _dbContext.RecipesCategories.AddRangeAsync(categories);
+            // await _dbContext.SaveChangesAsync();
+            //
+            // return recipeVm;
+        }
     }
 }
