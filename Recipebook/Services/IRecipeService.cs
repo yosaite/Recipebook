@@ -14,5 +14,6 @@ namespace Recipebook.Services
         Task<Recipe> AddRecipe(RecipeVM recipeVm);
         Task DeleteRecipe(ulong id);
         Task<Recipe> EditRecipe(RecipeVM recipeVm);
+        Task<bool> Rate(string userId, ulong recipeId, int rate);
     }
 }

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Recipebook.Data;
 
 namespace Recipebook.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220220122941_recipeRatingUpdate")]
+    partial class recipeRatingUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,6 +272,12 @@ namespace Recipebook.Migrations
                     b.Property<uint>("PreparationTime")
                         .HasColumnType("int unsigned");
 
+                    b.Property<ulong>("TotalRatingValue")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<ulong>("TotalUserRating")
+                        .HasColumnType("bigint unsigned");
+
                     b.Property<uint>("Yields")
                         .HasColumnType("int unsigned");
 
@@ -427,7 +435,7 @@ namespace Recipebook.Migrations
                         .IsRequired();
 
                     b.HasOne("Recipebook.Models.Recipe", "Recipe")
-                        .WithMany("Rates")
+                        .WithMany()
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -440,8 +448,6 @@ namespace Recipebook.Migrations
             modelBuilder.Entity("Recipebook.Models.Recipe", b =>
                 {
                     b.Navigation("Images");
-
-                    b.Navigation("Rates");
                 });
 #pragma warning restore 612, 618
         }

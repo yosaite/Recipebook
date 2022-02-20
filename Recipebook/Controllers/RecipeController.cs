@@ -113,5 +113,19 @@ namespace Recipebook.Controllers
             return RedirectToAction("UserRecipes", "Home");
         }
 
+        [HttpPost]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> Rate(ulong recipeId, int rate)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            
+            if(await _recipeService.Rate(user.Id, recipeId, rate))
+            {
+                return Ok();
+            }
+            
+            return NotFound();
+        }
+
     }
 }
