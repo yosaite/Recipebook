@@ -32,14 +32,14 @@ namespace Recipebook.Controllers
         public async Task<IActionResult> Index(ulong categoryId = 0,string categoryName="")
         {
             ViewBag.ListTitle = categoryName;
-            return View(await _recipeService.GetRecipes(categoryId));
+            return View(await _recipeService.GetRecipesVM(categoryId));
         }
         [Authorize(Roles="User, Admin")]
         public async Task<IActionResult> UserRecipes()
         {
             var userId = _userManager.GetUserId(HttpContext.User);
             ViewBag.ListTitle = "Moje przepisy";
-            return View("Index", await _recipeService.GetRecipes(userId));
+            return View("Index", await _recipeService.GetRecipesVM(userId));
         }
         public IActionResult Privacy()
         {

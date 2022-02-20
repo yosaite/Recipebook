@@ -8,8 +8,10 @@ namespace Recipebook
     {
         public AutoMapper()
         {
-            CreateMap<RecipeVM, Recipe>();
+            CreateMap<AddRecipeVM, Recipe>();
+            CreateMap<Recipe, AddRecipeVM>();
             CreateMap<Recipe, RecipeVM>();
+            CreateMap<RecipeVM, Recipe>();
         }
     }
 }

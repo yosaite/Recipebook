@@ -35,14 +35,17 @@ namespace Recipebook.Controllers
         [HttpGet]
         public async Task<IActionResult> Recipe(ulong recipeId)
         {
-            return View(await _recipeService.GetRecipe(recipeId));
+            var recipe = await _recipeService.GetRecipeVM(recipeId);
+            var userId = _userManager.GetUserId(HttpContext.User);
+            if(userId != null) recipe.UserRate = await _recipeService.GetUserRate(userId, recipeId);
+            return View(recipe);
         }
 
         [HttpGet]
         [Authorize(Roles = "User, Admin")]
         public IActionResult Add()
         {
-            var model = new RecipeVM
+            var model = new AddRecipeVM
             {
                 CategoriesList = _categoryService.GetCategories().Select(i => new SelectListItem()
                 {
@@ -59,7 +62,7 @@ namespace Recipebook.Controllers
         public async Task<IActionResult> Edit(ulong recipeId)
         {
             var recipe = await _recipeService.GetRecipe(recipeId);
-            var recipeVm = _mapper.Map<RecipeVM>(recipe);
+            var recipeVm = _mapper.Map<AddRecipeVM>(recipe);
             recipeVm.SelectedCategoriesIds = recipe.Categories.Select(m => m.Id).ToList();
             recipeVm.CategoriesList = _categoryService.GetCategories().Select(i => new SelectListItem()
             {
@@ -75,25 +78,25 @@ namespace Recipebook.Controllers
         [HttpPost]
         [Authorize(Roles = "User, Admin")]
         [RequestSizeLimit(52428800)]
-        public async Task<IActionResult> AddOrEdit(RecipeVM recipeVm)
+        public async Task<IActionResult> AddOrEdit(AddRecipeVM addRecipeVM)
         {
             if (ModelState.IsValid)
             {
                 var userId = _userManager.GetUserId(HttpContext.User);
-                recipeVm.ApplicationUserId = userId;
-                if (recipeVm.Id != 0)
+                addRecipeVM.ApplicationUserId = userId;
+                if (addRecipeVM.Id != 0)
                 {
-                    var recipe = await _recipeService.EditRecipe(recipeVm);
+                    var recipe = await _recipeService.EditRecipe(addRecipeVM);
                     return RedirectToAction("Recipe", "Recipe", new {recipeId = recipe.Id});
                 }
                 else
                 { 
-                    var recipe = await _recipeService.AddRecipe(recipeVm);
+                    var recipe = await _recipeService.AddRecipe(addRecipeVM);
                     return RedirectToAction("Recipe", "Recipe", new {recipeId = recipe.Id});
                 }
             }
             ViewBag.Edit = false;
-            return View("AddOrEdit",recipeVm);
+            return View("AddOrEdit",addRecipeVM);
         }
 
         
@@ -101,11 +104,11 @@ namespace Recipebook.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Delete(ulong recipeId)
         {
-            var recipe = await _recipeService.GetRecipe(recipeId);
+            var recipe = await _recipeService.GetRecipeVM(recipeId);
             if (recipe == null) return RedirectToAction("Index", "Home");
             
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (recipe.ApplicationUserId == _userManager.GetUserId(HttpContext.User) ||
+            if (recipe.ApplicationUser.Id == _userManager.GetUserId(HttpContext.User) ||
                 await _userManager.IsInRoleAsync(user, "Admin"))
             {
                 await _recipeService.DeleteRecipe(recipeId);
@@ -125,6 +128,12 @@ namespace Recipebook.Controllers
             }
             
             return NotFound();
+        }
+
+        [HttpGet]
+        public async Task<double> GetRate(ulong recipeId)
+        {
+            return await _recipeService.GetRecipeRate(recipeId);
         }
 
     }

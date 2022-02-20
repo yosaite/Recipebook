@@ -1,41 +1,24 @@
-﻿using Recipebook.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations.Schema;
+using Recipebook.Models;
 
 namespace Recipebook.ViewModel
 {
     public class RecipeVM
     {
         public ulong Id { get; set; }
-        [Required]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Nazwa musi mieć pomiędzy {2} - {1} znaków.")]
-        [DataType(DataType.Text)]
         public string Name { get; set; }
-        public List<string> Ingredients { get; set; }
-        [Required]
-        [StringLength(2000, MinimumLength = 20, ErrorMessage = "Sposób przygotowania musi mieć pomiędzy {2} - {1} znaków.")]
-        [DataType(DataType.Text)]
+        public ICollection<string> Ingredients { get; set; }
         public string Directions { get; set; }
-        [Required]
-        [StringLength(800, MinimumLength = 20, ErrorMessage = "Opis musi mieć pomiędzy {2} - {1} znaków.")]
-        [DataType(DataType.Text)]
         public string Description { get; set; }
-        [Required]
         public uint PreparationTime { get; set; }
-        [Required]
         public uint Yields { get; set; }
-        public List<ulong> SelectedCategoriesIds { get; set; } 
-        public IEnumerable<SelectListItem> CategoriesList { get; set; }
-        public List<Image> Images { get; set; }
-        public List<IFormFile> Files { get; set; }
+        public ICollection<Category> Categories { get; set; }
+        public ICollection<Image> Images { get; set; }
         public DateTime Created { get; set; }
-        public string ApplicationUserId { get; set; }
-        public RecipeVM()
-        {
-            Created = DateTime.Now;
-        }
+        public ApplicationUser ApplicationUser { get; set; }
+        public double UserRate { get; set; } = 0;
+        public double Rate { get; set; }
     }
 }

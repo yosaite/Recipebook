@@ -21,8 +21,6 @@ namespace Recipebook.Models
         public virtual ApplicationUser ApplicationUser { get; set; }
         [ForeignKey("AspNetUsers")]
         public string ApplicationUserId { get; set; }
-        [NotMapped]
-        public float Rate { get; set; }
         public virtual IList<RecipeUserRate> Rates { get; set; }
         public Recipe()
         {
