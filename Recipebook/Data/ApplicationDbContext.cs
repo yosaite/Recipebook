@@ -16,6 +16,7 @@ namespace Recipebook.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<RecipeUserRate> RecipeUserRates { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -40,6 +41,9 @@ namespace Recipebook.Data
                 .SetValueComparer(valueComparer);
             builder
                 .Entity<RecipeUserRate>()
+                .HasKey(m => new {m.ApplicationUserId, m.RecipeId});
+            builder
+                .Entity<Comment>()
                 .HasKey(m => new {m.ApplicationUserId, m.RecipeId});
         }
     }

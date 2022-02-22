@@ -75,7 +75,10 @@
                     <div class="col-12 col-md-4">
                         <div class="text-right my-5">
                             <span class="text-muted">Ocena: <span id="recipe-rate">@Model.Rate/5</span></span>
-                            <input id="rate-id" type="text" class="rating" hidden>
+                            @if (User.Identity is {IsAuthenticated: true })
+                            {
+                                <input id="rate-id" type="text" class="rating" hidden>
+                            }
                         </div>
                     </div>
                 </div>
@@ -117,6 +120,13 @@
                             }
                         </div>
                     </div>
+                    <form id="comment" novalidate class="needs-validation">
+                        <div class="form-group">
+                            <label for="comment-content"></label>
+                            <textarea id="comment-content" class="form-control"></textarea>
+                            <button class="btn btn-primary btn-lg btn-block" onclick="submitComment()">Dodaj przepis</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -152,21 +162,27 @@
                   recipeId: @Model.Id,
                   rate: value  
                 },
-                success: UpdateRate
+                success: UpdateRate,
+                error: UpdateRate
             });
          
         }).rating('update',@Html.Raw(@Model.UserRate));
         function UpdateRate(){
             $.ajax({
-            url: '/recipe/getRate',
-            type: 'GET',
-            data:{
-              recipeId: @Model.Id
-            },
-            success: function(res) {
-                $('#recipe-rate').text(`${res}/5`)
-            }
-        })
+                url: '/recipe/getRate',
+                type: 'GET',
+                data:{
+                  recipeId: @Model.Id
+                },
+                success: function(res) {
+                    $('#recipe-rate').text(`${res}/5`)
+                }
+            })
+        }
+        
+        function submitComment(){
+            let data = $('#comment').serialize();
+            console.log(data)
         }
     </script>
 }

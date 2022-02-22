@@ -29,4 +29,8 @@
     <Folder Include="wwwroot\images" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="ViewComponents\AddCommentViewComponent.cshtml" />
+  </ItemGroup>
+
 </Project>

@@ -22,6 +22,7 @@ namespace Recipebook.Models
         [ForeignKey("AspNetUsers")]
         public string ApplicationUserId { get; set; }
         public virtual IList<RecipeUserRate> Rates { get; set; }
+        public virtual IList<Comment> Comments { get; set; }
         public Recipe()
         {
             Created = DateTime.Now;
