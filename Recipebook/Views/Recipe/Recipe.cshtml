@@ -50,7 +50,7 @@
                 <div class="row">
                     <div class="col-12 col-md-8">
                         <div class="receipe-headline my-5">
-                            @if (@Model.ApplicationUser == null)
+                            @if (@Model.User == null)
                             {
                                 <small class="text-muted">Dodano: @Model.Created.ToString("dd MMMM yyyy") przez </small><br/>
                                 <small class="text-muted">Przez: Użytkownik nie istnieje</small>
@@ -58,7 +58,7 @@
                             else
                             {
                                 <small class="text-muted">Dodano: @Model.Created.ToString("dd MMMM yyyy")</small><br/>
-                                <small class="text-muted">Przez: @Model.ApplicationUser.UserName</small>
+                                <small class="text-muted">Przez: @Model.User.UserName</small>
                             }
                             <h2 class="mt-2 mb-4">@Model.Name</h2>
                             <div class="l-bor">
@@ -74,7 +74,13 @@
                             <span class="text-muted">Ocena: <span id="recipe-rate">@Model.Rate/5</span></span>
                             @if (User.Identity is {IsAuthenticated: true })
                             {
-                                <input id="rate-id" type="text" class="rating" hidden>
+                                <form method="post" id="recipe-form" data-ajax="true" data-ajax-url="/recipe/rate" data-ajax-method="post"
+                                      data-ajax-begin="rateOnBegin" 
+                                      data-ajax-success="rateOnSuccess">
+                                    <input type="text" name="recipeId" value="@Model.Id" hidden/>
+                                    <input name="rate" id="rate-id" type="text" class="rating" hidden>
+                                </form>
+                                
                             }
                         </div>
                     </div>
@@ -120,49 +126,29 @@
 
                     <!-- Comments -->
                     <div class="container pt-5">
-                        <div class="media mt-3 shadow-textarea">
-                            <img class="d-flex rounded-circle avatar z-depth-1-half mr-3" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-8.webp"
-                                 alt="Generic placeholder image">
-                            <div class="media-body">
-                                <h5 class="mt-0 font-weight-bold blue-text">Twoje zjebane imię</h5>
-                                <div class="form-group basic-textarea rounded-corners">
-                                    <textarea class="form-control z-depth-1" id="comment-content" rows="3" placeholder="Napisz swój komentarz..."></textarea>
-                                    <button class="btn btn-primary ali" onclick="submitComment()">Dodaj komentarz</button>
+                        @if (User.Identity is {IsAuthenticated: true })
+                        {
+                            <div class="media mt-3 shadow-textarea">
+                                <img id="user-image" class="d-flex rounded-circle avatar z-depth-1-half mr-3" src="/no-image.png"
+                                     alt="Generic placeholder image" width="100px" height="100px">
+                                <div class="media-body">
+                                    <h5 class="mt-0 font-weight-bold blue-text">@User.Identity.Name</h5>
+                                    <div class="form-group basic-textarea rounded-corners">
+                                        <form method="post" asp-controller="Comment" asp-action="Add" data-ajax="true" data-ajax-method="post" data-ajax-begin="commentOnBegin" data-ajax-success="commentOnSuccess"> 
+                                            <input type="text" name="recipeId" value="@Model.Id" hidden/>
+                                            <textarea name="content" class="form-control z-depth-1" id="comment-content" rows="3" placeholder="Napisz swój komentarz..."></textarea>
+                                            <button id="comment-button" type="submit" class="btn btn-primary ali">Dodaj komentarz</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                         <div class="row d-flex justify-content-center mt-3">
                             <div class="col-md-12 col-lg-12">
-                                @if (Model.Comments != null)
-                                {
-                                    <div class="card">
-                                        @foreach (var comment in Model.Comments)
-                                        {
-                                            <div class="card-body p-4">
-                                                @if (Model.Comments.First() == comment)
-                                                {
-                                                    <h4 class="mb-4 pb-2">Ostatnie komentarze</h4>
-                                                }
-                                                <div class="d-flex flex-start">
-                                                    <img
-                                                        class="rounded-circle shadow-1-strong mr-3"
-                                                        src="https://mdbootstrap.com/img/Photos/Avatars/avatar-8.webp"
-                                                        alt="avatar"
-                                                        width="40"
-                                                        height="40"/>
-                                                    <div>
-                                                        <h6 class="font-weight-bold mb-1">@comment.UserName</h6>
-                                                        <div class="d-flex align-items-center mb-3">
-                                                            <small class="mb-0">March 15, 2021</small>
-                                                        </div>
-                                                        <p class="mb-0">@comment.Content</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr class="my-0"/>
-                                        }
-                                    </div>
-                                }
+                                <div class="card" id="comment-card">
+                               
+                                
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -172,84 +158,107 @@
     </div>
 </div>
 
-<div class="btn-group-fab" role="group" aria-label="FAB Menu">
-    <div>
-        <button type="button" class="btn btn-main btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Menu">
-            <i class="fa fa-bars"></i>
-        </button>
-        <a asp-controller="Recipe" asp-action="Delete" asp-route-recipeId="@Model.Id" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Usuń przepis">
-            <i class="fa-solid fa-xmark"></i>
-        </a>
-        <a asp-controller="Recipe" asp-action="Edit" asp-route-recipeId="@Model.Id" type="button" class="btn btn-sub btn-info has-tooltip" data-toggle="tooltip" data-placement="left" title="Edytuj przepis">
-            <i class="fa-solid fa-pen-to-square"></i>
-        </a>
+@if (User.Identity is {IsAuthenticated: true })
+{
+    <div class="btn-group-fab" role="group" aria-label="FAB Menu">
+        <div>
+            <button type="button" class="btn btn-main btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Menu">
+                <i class="fa fa-bars"></i>
+            </button>
+            <a asp-controller="Recipe" asp-action="Delete" asp-route-recipeId="@Model.Id" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Usuń przepis">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+            <a asp-controller="Recipe" asp-action="Edit" asp-route-recipeId="@Model.Id" type="button" class="btn btn-sub btn-info has-tooltip" data-toggle="tooltip" data-placement="left" title="Edytuj przepis">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+        </div>
     </div>
-</div>
+}
+
 
 @section Scripts
 {
     <script>
     
-        $(function() {
-          $('.btn-group-fab').on('click', '.btn', function() {
-            $('.btn-group-fab').toggleClass('active');
-          });
-          $('has-tooltip').tooltip();
-        });
-        
-        $(function () {
-          $('[data-toggle="tooltip"]').tooltip()
-        })
+        $('.btn-group-fab').on('click', '.btn', function() {$('.btn-group-fab').toggleClass('active');});
+        $('[data-toggle="tooltip"]').tooltip()        
+        $('has-tooltip').tooltip();
         
         $('#rate-id').rating({
             'showCaption': false,
             'size': 'sm',
             'showClear': false,
             'step': 1
-        }).on('rating:change', function (event, value, caption){
-            $('#recipe-rate').html('<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Loading...</span></div>') 
-            $.ajax({
-                url: '/recipe/rate',
-                type: 'POST',
-                data:{
-                  recipeId: @Model.Id,
-                  rate: value  
-                },
-                success: UpdateRate,
-                error: UpdateRate
-            });
-         
-        }).rating('update',@Html.Raw(@Model.UserRate));
-        function UpdateRate(){
-            $.ajax({
-                url: '/recipe/getRate',
-                type: 'GET',
-                data:{
-                  recipeId: @Model.Id
-                },
-                success: function(res) {
-                    $('#recipe-rate').text(`${res}/5`)
-                }
-            })
+        }).on('rating:change', function(){         
+            $('#recipe-form').submit()
+        })
+        
+        rateOnBegin = () =>{ $('#recipe-rate').html('<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Ładowanie...</span></div>') }    
+        rateOnSuccess = (value) => { $('#recipe-rate').text(`${value}/5`) }
+        commentOnBegin = () => {
+            $('#comment-button').html('<div class="spinner-border spinner-border-sm" role="status"><span class="sr-only">Dodawanie komentarza...</span></div>');
+        }
+        commentOnSuccess = () =>{
+            console.log('success')
+            getComments();
+            $('#comment-button').html('Dodaj komentarz');
         }
         
-        function submitComment(){
-            let data = $('#comment-content').val();
+        function getComments(){
             $.ajax({
-                url: '/comment/add',
-                type: 'POST',
+                url: '/comment/get',
+                type: 'GET',
                 data:{
-                  RecipeId: @Model.Id,
-                  Content: data  
+                  RecipeId: @Model.Id, 
                 },
-                success: function(){
-                        
+                success: function(response){
+                         $('#comment-card').empty()
+                         
+                        for(let comment in response){
+                            var commentDate = new Date(response[comment]['created']).toUTCString()
+                            $('#comment-card').append(
+                             `<div class="card-body p-4">
+                                ${ (comment==0) ?'<h4 class="mb-4 pb-2">Ostatnie komentarze</h4>':''}
+                                <div class="d-flex flex-start">
+                                    <img
+                                        class="rounded-circle shadow-1-strong mr-3"
+                                        src="/${response[comment]['avatar']}"
+                                        alt="avatar"
+                                        width="40"
+                                        height="40"/>
+                                    <div>
+                                        <h6 class="font-weight-bold mb-1">${response[comment]['userName']}</h6>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <small class="mb-0">${commentDate}</small>
+                                        </div>
+                                        <p class="mb-0">${response[comment]['content']}</p>
+                                    </div>
+                                </div>
+                                </div>
+                                <hr class="my-0"/> `)
+                        }
                     },
                 error: function(){
-                    
+                       
                     }
             });
         }
+        function getUserAvatar(){
+            $.ajax({
+                url: '/user/getAvatar',
+                type: 'GET',
+                success: function(response){
+                         $('#user-image').prop('src',`/${response}`)
+                    },
+                error: function(){
+                       
+                    }
+            });
+        }
+        $( document ).ready(function() {
+            getComments();
+            getUserAvatar();
+        });
     </script>
 }
 

@@ -15,14 +15,17 @@ namespace Recipebook.Models
         public string Description { get; set; }
         public uint PreparationTime { get; set; }
         public uint Yields { get; set; }
-        public virtual ICollection<Category> Categories { get; set; }
-        public List<Image> Images { get; set; }
+        
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime Created { get; set; }
-        public virtual ApplicationUser ApplicationUser { get; set; }
-        [ForeignKey("AspNetUsers")]
-        public string ApplicationUserId { get; set; }
-        public virtual IList<RecipeUserRate> Rates { get; set; }
-        public virtual IList<Comment> Comments { get; set; }
+        public virtual User User { get; set; }
+        [ForeignKey("User")]
+        public string UserId { get; set; }
+        
+        public List<Image> Images { get; set; }
+        public virtual ICollection<Rate> Rates { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
         public Recipe()
         {
             Created = DateTime.Now;

@@ -9,8 +9,8 @@ using Recipebook.Data;
 namespace Recipebook.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220220122941_recipeRatingUpdate")]
-    partial class recipeRatingUpdate
+    [Migration("20220222171803_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,32 @@ namespace Recipebook.Migrations
                     b.ToTable("CategoryRecipe");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -54,7 +80,7 @@ namespace Recipebook.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims");
+                    b.ToTable("RoleClaims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -77,7 +103,7 @@ namespace Recipebook.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims");
+                    b.ToTable("UserClaims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -101,7 +127,7 @@ namespace Recipebook.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins");
+                    b.ToTable("UserLogins");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -116,7 +142,7 @@ namespace Recipebook.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles");
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -137,19 +163,138 @@ namespace Recipebook.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens");
+                    b.ToTable("UserTokens");
                 });
 
-            modelBuilder.Entity("Recipebook.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Recipebook.Models.Category", b =>
+                {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<ulong?>("ImageId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Recipebook.Models.Comment", b =>
+                {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<ulong>("RecipeId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Recipebook.Models.Image", b =>
+                {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("longtext");
+
+                    b.Property<ulong?>("RecipeId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("Recipebook.Models.Rate", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<ulong>("RecipeId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RecipeId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("Rates");
+                });
+
+            modelBuilder.Entity("Recipebook.Models.Recipe", b =>
+                {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Directions")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Ingredients")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<uint>("PreparationTime")
+                        .HasColumnType("int unsigned");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<uint>("Yields")
+                        .HasColumnType("int unsigned");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Recipes");
+                });
+
+            modelBuilder.Entity("Recipebook.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("varchar(255)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
-
-                    b.Property<string>("AvatarPath")
-                        .HasColumnType("longtext");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -161,6 +306,9 @@ namespace Recipebook.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<ulong?>("ImageId")
+                        .HasColumnType("bigint unsigned");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -197,6 +345,8 @@ namespace Recipebook.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ImageId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -204,135 +354,7 @@ namespace Recipebook.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("Recipebook.Models.Category", b =>
-                {
-                    b.Property<ulong>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<ulong?>("ImageId")
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ImageId");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Recipebook.Models.Image", b =>
-                {
-                    b.Property<ulong>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<string>("Path")
-                        .HasColumnType("longtext");
-
-                    b.Property<ulong?>("RecipeId")
-                        .HasColumnType("bigint unsigned");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("Recipebook.Models.Recipe", b =>
-                {
-                    b.Property<ulong>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Directions")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Ingredients")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext");
-
-                    b.Property<uint>("PreparationTime")
-                        .HasColumnType("int unsigned");
-
-                    b.Property<ulong>("TotalRatingValue")
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<ulong>("TotalUserRating")
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<uint>("Yields")
-                        .HasColumnType("int unsigned");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("Recipes");
-                });
-
-            modelBuilder.Entity("Recipebook.Models.RecipeUserRate", b =>
-                {
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<ulong>("RecipeId")
-                        .HasColumnType("bigint unsigned");
-
-                    b.Property<int>("Rate")
-                        .HasColumnType("int");
-
-                    b.HasKey("ApplicationUserId", "RecipeId");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("RecipeUserRates");
-                });
-
-            modelBuilder.Entity("Recipebook.Models.Role", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<int>("RoleValue")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CategoryRecipe", b =>
@@ -352,7 +374,7 @@ namespace Recipebook.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Recipebook.Models.Role", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -361,7 +383,7 @@ namespace Recipebook.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Recipebook.Models.ApplicationUser", null)
+                    b.HasOne("Recipebook.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -370,7 +392,7 @@ namespace Recipebook.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Recipebook.Models.ApplicationUser", null)
+                    b.HasOne("Recipebook.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -379,13 +401,13 @@ namespace Recipebook.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Recipebook.Models.Role", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Recipebook.Models.ApplicationUser", null)
+                    b.HasOne("Recipebook.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -394,7 +416,7 @@ namespace Recipebook.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Recipebook.Models.ApplicationUser", null)
+                    b.HasOne("Recipebook.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -410,6 +432,23 @@ namespace Recipebook.Migrations
                     b.Navigation("Image");
                 });
 
+            modelBuilder.Entity("Recipebook.Models.Comment", b =>
+                {
+                    b.HasOne("Recipebook.Models.Recipe", "Recipe")
+                        .WithMany("Comments")
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Recipebook.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Recipe");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Recipebook.Models.Image", b =>
                 {
                     b.HasOne("Recipebook.Models.Recipe", null)
@@ -417,26 +456,17 @@ namespace Recipebook.Migrations
                         .HasForeignKey("RecipeId");
                 });
 
-            modelBuilder.Entity("Recipebook.Models.Recipe", b =>
+            modelBuilder.Entity("Recipebook.Models.Rate", b =>
                 {
-                    b.HasOne("Recipebook.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.Navigation("ApplicationUser");
-                });
-
-            modelBuilder.Entity("Recipebook.Models.RecipeUserRate", b =>
-                {
-                    b.HasOne("Recipebook.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId")
+                    b.HasOne("Recipebook.Models.Recipe", "Recipe")
+                        .WithMany("Rates")
+                        .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Recipebook.Models.Recipe", "Recipe")
+                    b.HasOne("Recipebook.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("RecipeId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -447,7 +477,29 @@ namespace Recipebook.Migrations
 
             modelBuilder.Entity("Recipebook.Models.Recipe", b =>
                 {
+                    b.HasOne("Recipebook.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Recipebook.Models.User", b =>
+                {
+                    b.HasOne("Recipebook.Models.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId");
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("Recipebook.Models.Recipe", b =>
+                {
+                    b.Navigation("Comments");
+
                     b.Navigation("Images");
+
+                    b.Navigation("Rates");
                 });
 #pragma warning restore 612, 618
         }

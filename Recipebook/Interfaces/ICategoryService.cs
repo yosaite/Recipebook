@@ -1,7 +1,7 @@
-﻿using Recipebook.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Recipebook.Models;
 
-namespace Recipebook.Services
+namespace Recipebook.Interfaces
 {
     public interface ICategoryService
     {

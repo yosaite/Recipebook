@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Recipebook.ViewModel;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Recipebook.Interfaces;
 
 namespace Recipebook.Controllers
 {
@@ -18,22 +19,24 @@ namespace Recipebook.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IRecipeService _recipeService;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly ICategoryService _categoryService;
 
-        public HomeController(ILogger<HomeController> logger, IRecipeService recipeService, UserManager<ApplicationUser> userManager, ICategoryService categoryService)
+        public HomeController(ILogger<HomeController> logger, IRecipeService recipeService, UserManager<User> userManager, ICategoryService categoryService)
         {
             _logger = logger;
             _recipeService = recipeService;
             _userManager = userManager;
             _categoryService = categoryService;
         }
-
+        [HttpGet]
         public async Task<IActionResult> Index(ulong categoryId = 0,string categoryName="")
         {
             ViewBag.ListTitle = categoryName;
             return View(await _recipeService.GetRecipesVM(categoryId));
         }
+        
+        [HttpGet]
         [Authorize(Roles="User, Admin")]
         public async Task<IActionResult> UserRecipes()
         {

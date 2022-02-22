@@ -18,13 +18,13 @@ namespace Recipebook.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class LoginModel : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, 
+        public LoginModel(SignInManager<User> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<ApplicationUser> userManager)
+            UserManager<User> userManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -82,7 +82,7 @@ namespace Recipebook.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                ApplicationUser user = await _userManager.FindByEmailAsync(Input.Email);
+                User user = await _userManager.FindByEmailAsync(Input.Email);
                 if(user == null)
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");

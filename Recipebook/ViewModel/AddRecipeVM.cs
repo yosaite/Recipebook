@@ -32,7 +32,7 @@ namespace Recipebook.ViewModel
         public List<Image> Images { get; set; }
         public List<IFormFile> Files { get; set; }
         public DateTime Created { get; set; }
-        public string ApplicationUserId { get; set; }
+        public string UserId { get; set; }
         public AddRecipeVM()
         {
             Created = DateTime.Now;

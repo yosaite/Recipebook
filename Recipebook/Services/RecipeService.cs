@@ -1,15 +1,14 @@
 ﻿using System;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Recipebook.Data;
 using Recipebook.Models;
 using Recipebook.ViewModel;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Recipebook.Interfaces;
 
 namespace Recipebook.Services
 {
@@ -35,7 +34,7 @@ namespace Recipebook.Services
             var recipe = await _dbContext.Recipes
                 .Where(r => r.Id == id)
                 .Include(m => m.Images)
-                .Include(m => m.ApplicationUser)
+                .Include(m => m.User)
                 .Include(m => m.Categories)
                 .Include(c=>c.Comments).ThenInclude(z=>z.User)
                 .FirstOrDefaultAsync();
@@ -46,7 +45,7 @@ namespace Recipebook.Services
             var recipe = await _dbContext.Recipes
                 .Where(r => r.Id == id)
                 .Include(m => m.Images)
-                .Include(m => m.ApplicationUser)
+                .Include(m => m.User)
                 .Include(m => m.Categories)
                 .Include(c=>c.Comments).ThenInclude(z=>z.User)
                 .Select(n=>new RecipeVM()
@@ -61,9 +60,8 @@ namespace Recipebook.Services
                     Categories = n.Categories,
                     Images = n.Images,
                     Created = n.Created,
-                    ApplicationUser = n.ApplicationUser,
-                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Rate))/Convert.ToDouble(n.Rates.Count),1),
-                    Comments = _mapper.Map<ICollection<CommentVM>>(n.Comments)
+                    User = n.User,
+                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Value))/Convert.ToDouble(n.Rates.Count),1),
                 })
                 .FirstOrDefaultAsync();
             return recipe;
@@ -73,7 +71,7 @@ namespace Recipebook.Services
         public async Task<List<RecipeVM>> GetRecipesVM()
         {
             return await _dbContext.Recipes.Include(m => m.Images)
-                .Include(m => m.ApplicationUser)
+                .Include(m => m.User)
                 .Select(n=>new RecipeVM()
                 {
                     Id = n.Id,
@@ -81,7 +79,7 @@ namespace Recipebook.Services
                     Description = n.Description,
                     Images = n.Images,
                     Created = n.Created,
-                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Rate))/Convert.ToDouble(n.Rates.Count),1)
+                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Value))/Convert.ToDouble(n.Rates.Count),1)
                     
                 })
                 .ToListAsync();
@@ -104,7 +102,7 @@ namespace Recipebook.Services
                     Description = n.Description,
                     Images = n.Images,
                     Created = n.Created,
-                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Rate))/Convert.ToDouble(n.Rates.Count),1)
+                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Value))/Convert.ToDouble(n.Rates.Count),1)
                     
                 })
                 .ToListAsync();
@@ -116,10 +114,9 @@ namespace Recipebook.Services
             {
                 return await GetRecipesVM();
             }
-
-            return await _dbContext.Recipes.Include(m => m.Images)
-                .Include(m => m.ApplicationUser)
-                .Where(c => c.ApplicationUserId == userId)
+            var recipes = await _dbContext.Recipes.Include(m => m.Images)
+                .Include(m => m.User)
+                .Where(c => c.UserId == userId)
                 .Select(n=>new RecipeVM()
                 {
                     Id = n.Id,
@@ -127,17 +124,18 @@ namespace Recipebook.Services
                     Description = n.Description,
                     Images = n.Images,
                     Created = n.Created,
-                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Rate))/Convert.ToDouble(n.Rates.Count),1)
+                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Value))/Convert.ToDouble(n.Rates.Count),1)
                     
                 })
                 .ToListAsync();
+            return recipes;
         }
 
         public async Task<Recipe> AddRecipe(AddRecipeVM addRecipeVM)
         {
             var recipe = _mapper.Map<Recipe>(addRecipeVM);
-
-            recipe.Images = await _fileService.SaveImages(addRecipeVM.Files);
+            var images = await _fileService.SaveImages(addRecipeVM.Files);
+            if (images.Any()) recipe.Images = images;
             recipe.Categories = await _dbContext.Categories
                 .Where(c => addRecipeVM.SelectedCategoriesIds.Contains(c.Id))
                 .ToListAsync();
@@ -187,12 +185,12 @@ namespace Recipebook.Services
         public async Task<bool> Rate(string userId, ulong recipeId, int rate)
         {
             if (rate is > 5 or < 0) return false;
-            var userRate = await _dbContext.RecipeUserRates
-                .Where(r => r.RecipeId == recipeId && r.ApplicationUserId == userId).FirstOrDefaultAsync();
+            var userRate = await _dbContext.Rates
+                .Where(r => r.RecipeId == recipeId && r.UserId == userId).FirstOrDefaultAsync();
             if (userRate != null)
             {
-                userRate.Rate = rate;
-                _dbContext.RecipeUserRates.Update(userRate);
+                userRate.Value = rate;
+                _dbContext.Rates.Update(userRate);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
@@ -203,11 +201,11 @@ namespace Recipebook.Services
             var user = await _dbContext.Users.Where(m => m.Id == userId).FirstOrDefaultAsync();
             if (user == null) return false;
 
-            await _dbContext.RecipeUserRates.AddAsync(new RecipeUserRate()
+            await _dbContext.Rates.AddAsync(new Rate()
             {
                 User = user,
                 Recipe = recipe,
-                Rate = rate
+                Value = rate
             });
 
             await _dbContext.SaveChangesAsync();
@@ -215,13 +213,12 @@ namespace Recipebook.Services
         }
         public async Task<double> GetUserRate(string userId, ulong recipeId)
         {
-            return await _dbContext.RecipeUserRates.Where(c => c.ApplicationUserId == userId && c.RecipeId == recipeId).Select(z => z.Rate).FirstOrDefaultAsync();
+            return await _dbContext.Rates.Where(c => c.UserId == userId && c.RecipeId == recipeId).Select(z => z.Value).FirstOrDefaultAsync();
         }
-
         public async Task<double> GetRecipeRate(ulong recipeId)
         {
-            return Math.Round(Convert.ToDouble(await _dbContext.RecipeUserRates.Where(r => r.RecipeId == recipeId)
-                .AverageAsync(z => z.Rate)),1);
+            return Math.Round(Convert.ToDouble(await _dbContext.Rates.Where(r => r.RecipeId == recipeId)
+                .AverageAsync(z => z.Value)),1);
         }
     }
 }

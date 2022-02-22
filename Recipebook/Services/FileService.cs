@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Recipebook.Data;
+using Recipebook.Interfaces;
 using Recipebook.Models;
 
 namespace Recipebook.Services
@@ -23,6 +24,7 @@ namespace Recipebook.Services
 
         public async Task<List<Image>> SaveImages(IEnumerable<IFormFile> formFiles)
         {
+            if (formFiles == null) return new List<Image>();
             var path = Path.Combine(_environment.WebRootPath, "images");
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             var images = new List<Image>();

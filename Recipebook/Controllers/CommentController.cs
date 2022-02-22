@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Recipebook.Interfaces;
 using Recipebook.Models;
 using Recipebook.Services;
 using Recipebook.ViewModel;
@@ -15,11 +16,11 @@ namespace Recipebook.Controllers
     {
         private readonly ILogger<CommentController> _logger;
         private readonly ICommentService _commentService;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
 
-        public CommentController(ILogger<CommentController> logger, ICommentService commentService, UserManager<ApplicationUser> userManager, ICategoryService categoryService, IMapper mapper)
+        public CommentController(ILogger<CommentController> logger, ICommentService commentService, UserManager<User> userManager, ICategoryService categoryService, IMapper mapper)
         {
             _logger = logger;
             _commentService = commentService;
@@ -37,7 +38,7 @@ namespace Recipebook.Controllers
             {
                 return Ok();
             }
-            return NotFound();
+            return BadRequest();
         }
         [HttpGet]
         public async Task<ICollection<CommentVM>> Get(ulong recipeId)

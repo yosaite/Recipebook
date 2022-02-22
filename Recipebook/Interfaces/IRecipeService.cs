@@ -1,9 +1,9 @@
-﻿using Recipebook.Models;
-using Recipebook.ViewModel;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Recipebook.Models;
+using Recipebook.ViewModel;
 
-namespace Recipebook.Services
+namespace Recipebook.Interfaces
 {
     public interface IRecipeService
     {

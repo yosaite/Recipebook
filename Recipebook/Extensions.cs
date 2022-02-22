@@ -5,6 +5,11 @@ using System;
 
 namespace Recipebook
 {
+    public enum RoleValue
+    {
+        User,
+        Admin
+    }
     public static class Extensions
     {
         public static void RunAppSetup(this IServiceCollection services)
@@ -21,11 +26,11 @@ namespace Recipebook
         private static async void CreateRole(IServiceCollection services, string roleName)
         {
             var serviceProvider = services.BuildServiceProvider();
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var roleExists = await roleManager.RoleExistsAsync(roleName);
             if (!roleExists)
             {
-                await roleManager.CreateAsync(new Role(roleName));
+                await roleManager.CreateAsync(new IdentityRole(roleName));
             }
         }
     }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Recipebook.Interfaces;
 using Recipebook.Models;
 using Recipebook.Services;
 using Recipebook.ViewModel;
@@ -18,12 +19,12 @@ namespace Recipebook.Controllers
     {
         private readonly ILogger<RecipeController> _logger;
         private readonly IRecipeService _recipeService;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
 
         public RecipeController(ILogger<RecipeController> logger, IRecipeService recipeService,
-            UserManager<ApplicationUser> userManager, ICategoryService categoryService, IMapper mapper)
+            UserManager<User> userManager, ICategoryService categoryService, IMapper mapper)
         {
             _logger = logger;
             _recipeService = recipeService;
@@ -83,7 +84,7 @@ namespace Recipebook.Controllers
             if (ModelState.IsValid)
             {
                 var userId = _userManager.GetUserId(HttpContext.User);
-                addRecipeVM.ApplicationUserId = userId;
+                addRecipeVM.UserId = userId;
                 if (addRecipeVM.Id != 0)
                 {
                     var recipe = await _recipeService.EditRecipe(addRecipeVM);
@@ -108,7 +109,7 @@ namespace Recipebook.Controllers
             if (recipe == null) return RedirectToAction("Index", "Home");
             
             var user = await _userManager.GetUserAsync(HttpContext.User);
-            if (recipe.ApplicationUser.Id == _userManager.GetUserId(HttpContext.User) ||
+            if (recipe.User.Id == _userManager.GetUserId(HttpContext.User) ||
                 await _userManager.IsInRoleAsync(user, "Admin"))
             {
                 await _recipeService.DeleteRecipe(recipeId);
@@ -124,17 +125,10 @@ namespace Recipebook.Controllers
             
             if(await _recipeService.Rate(user.Id, recipeId, rate))
             {
-                return Ok();
+                return Json(await _recipeService.GetRecipeRate(recipeId));
             }
-            
-            return NotFound();
+            return BadRequest();
         }
-
-        [HttpGet]
-        public async Task<double> GetRate(ulong recipeId)
-        {
-            return await _recipeService.GetRecipeRate(recipeId);
-        }
-
+        
     }
 }

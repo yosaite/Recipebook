@@ -31,6 +31,8 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="ViewComponents\AddCommentViewComponent.cshtml" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap-rating\css\bootstrap-rating.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap-rating\js\bootstrap-rating.js" />
   </ItemGroup>
 
 </Project>

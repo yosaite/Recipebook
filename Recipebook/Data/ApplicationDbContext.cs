@@ -7,15 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace Recipebook.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, string>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Image> Images { get; set; }
-        public DbSet<RecipeUserRate> RecipeUserRates { get; set; }
+        public DbSet<Rate> Rates { get; set; }
         public DbSet<Comment> Comments { get; set; }
 
 
@@ -26,6 +27,15 @@ namespace Recipebook.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<User>().ToTable("Users");
+            builder.Entity<IdentityRole>().ToTable("Roles");
+            builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
+            builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+            builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
+            builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+            
+            
             builder.Entity<Recipe>().Property(p => p.Ingredients)
             .HasConversion(
                 v => JsonSerializer.Serialize(v, default),
@@ -40,8 +50,8 @@ namespace Recipebook.Data
                 .Metadata
                 .SetValueComparer(valueComparer);
             builder
-                .Entity<RecipeUserRate>()
-                .HasKey(m => new {m.ApplicationUserId, m.RecipeId});
+                .Entity<Rate>()
+                .HasKey(m => new {m.UserId, m.RecipeId});
         }
     }
 }

@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Recipebook.Interfaces;
 
 namespace Recipebook
 {
@@ -39,11 +40,12 @@ namespace Recipebook
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddRoles<Role>()
-                .AddRoleManager<RoleManager<Role>>()
+            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
+                .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddControllersWithViews();

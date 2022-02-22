@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Recipebook.ViewModel;
 
-namespace Recipebook.Services
+namespace Recipebook.Interfaces
 {
     public interface ICommentService
     {
