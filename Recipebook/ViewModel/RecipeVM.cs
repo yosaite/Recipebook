@@ -16,6 +16,7 @@ namespace Recipebook.ViewModel
         public uint Yields { get; set; }
         public ICollection<Category> Categories { get; set; }
         public ICollection<Image> Images { get; set; }
+        public ICollection<CommentVM> Comments { get; set; }
         public DateTime Created { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
         public double UserRate { get; set; } = 0;

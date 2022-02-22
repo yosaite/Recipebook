@@ -42,9 +42,6 @@ namespace Recipebook.Data
             builder
                 .Entity<RecipeUserRate>()
                 .HasKey(m => new {m.ApplicationUserId, m.RecipeId});
-            builder
-                .Entity<Comment>()
-                .HasKey(m => new {m.ApplicationUserId, m.RecipeId});
         }
     }
 }

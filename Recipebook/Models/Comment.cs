@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Recipebook.Models
 {
     public class Comment
     {
+        [Key] 
+        public ulong Id { get; set; }
         public virtual ApplicationUser User { get; set; }
         [ForeignKey("ApplicationUser")]
         public string ApplicationUserId { get; set; }

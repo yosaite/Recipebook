@@ -37,6 +37,7 @@ namespace Recipebook.Services
                 .Include(m => m.Images)
                 .Include(m => m.ApplicationUser)
                 .Include(m => m.Categories)
+                .Include(c=>c.Comments).ThenInclude(z=>z.User)
                 .FirstOrDefaultAsync();
             return recipe;
         }
@@ -47,6 +48,7 @@ namespace Recipebook.Services
                 .Include(m => m.Images)
                 .Include(m => m.ApplicationUser)
                 .Include(m => m.Categories)
+                .Include(c=>c.Comments).ThenInclude(z=>z.User)
                 .Select(n=>new RecipeVM()
                 {
                     Id = n.Id,
@@ -60,7 +62,8 @@ namespace Recipebook.Services
                     Images = n.Images,
                     Created = n.Created,
                     ApplicationUser = n.ApplicationUser,
-                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Rate))/Convert.ToDouble(n.Rates.Count),1)
+                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Rate))/Convert.ToDouble(n.Rates.Count),1),
+                    Comments = _mapper.Map<ICollection<CommentVM>>(n.Comments)
                 })
                 .FirstOrDefaultAsync();
             return recipe;

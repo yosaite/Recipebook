@@ -7,14 +7,8 @@
 }
 
 <div class="receipe-post-area section-padding-80">
-    <div class="btn-group-fab" role="group" aria-label="FAB Menu">
-        <div>
-            <button type="button" class="btn btn-main btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Menu"><i class="fa fa-bars"></i></button>
-            <a asp-controller="Recipe" asp-action="Delete" asp-route-recipeId="@Model.Id" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Usuń przepis"><i class="fa-solid fa-xmark"></i></a>
-            <a asp-controller="Recipe" asp-action="Edit" asp-route-recipeId="@Model.Id" type="button" class="btn btn-sub btn-info has-tooltip" data-toggle="tooltip" data-placement="left" title="Edytuj przepis"><i class="fa-solid fa-pen-to-square"></i></a>
-        </div>
-    </div>
-   
+
+
     <!-- Receipe Slider -->
     <div class="container">
         <div class="row">
@@ -27,7 +21,6 @@
 
                             @foreach (var img in @Model.Images)
                             {
-
                                 <div class="carousel-item @(first ? Html.Raw("active") : Html.Raw(""))">
                                     <img class="d-block w-100 rec" src=@($"/images/{@img.Path}") alt="">
                                 </div>
@@ -35,11 +28,15 @@
                             }
                         }
                         <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                            <span><i class="fas fa-2x fa-chevron-left"></i></span>
+                            <span>
+                                <i class="fas fa-2x fa-chevron-left"></i>
+                            </span>
                             <span class="sr-only">Previous</span>
                         </a>
                         <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                            <span><i class="fas fa-2x fa-chevron-right"></i></span>
+                            <span>
+                                <i class="fas fa-2x fa-chevron-right"></i>
+                            </span>
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
@@ -120,16 +117,72 @@
                             }
                         </div>
                     </div>
-                    <form id="comment" novalidate class="needs-validation">
-                        <div class="form-group">
-                            <label for="comment-content"></label>
-                            <textarea id="comment-content" class="form-control"></textarea>
-                            <button class="btn btn-primary btn-lg btn-block" onclick="submitComment()">Dodaj przepis</button>
+
+                    <!-- Comments -->
+                    <div class="container pt-5">
+                        <div class="media mt-3 shadow-textarea">
+                            <img class="d-flex rounded-circle avatar z-depth-1-half mr-3" src="https://mdbootstrap.com/img/Photos/Avatars/avatar-8.webp"
+                                 alt="Generic placeholder image">
+                            <div class="media-body">
+                                <h5 class="mt-0 font-weight-bold blue-text">Twoje zjebane imię</h5>
+                                <div class="form-group basic-textarea rounded-corners">
+                                    <textarea class="form-control z-depth-1" id="comment-content" rows="3" placeholder="Napisz swój komentarz..."></textarea>
+                                    <button class="btn btn-primary ali" onclick="submitComment()">Dodaj komentarz</button>
+                                </div>
+                            </div>
                         </div>
-                    </form>
+                        <div class="row d-flex justify-content-center mt-3">
+                            <div class="col-md-12 col-lg-12">
+                                @if (Model.Comments != null)
+                                {
+                                    <div class="card">
+                                        @foreach (var comment in Model.Comments)
+                                        {
+                                            <div class="card-body p-4">
+                                                @if (Model.Comments.First() == comment)
+                                                {
+                                                    <h4 class="mb-4 pb-2">Ostatnie komentarze</h4>
+                                                }
+                                                <div class="d-flex flex-start">
+                                                    <img
+                                                        class="rounded-circle shadow-1-strong mr-3"
+                                                        src="https://mdbootstrap.com/img/Photos/Avatars/avatar-8.webp"
+                                                        alt="avatar"
+                                                        width="40"
+                                                        height="40"/>
+                                                    <div>
+                                                        <h6 class="font-weight-bold mb-1">@comment.UserName</h6>
+                                                        <div class="d-flex align-items-center mb-3">
+                                                            <small class="mb-0">March 15, 2021</small>
+                                                        </div>
+                                                        <p class="mb-0">@comment.Content</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr class="my-0"/>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="btn-group-fab" role="group" aria-label="FAB Menu">
+    <div>
+        <button type="button" class="btn btn-main btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Menu">
+            <i class="fa fa-bars"></i>
+        </button>
+        <a asp-controller="Recipe" asp-action="Delete" asp-route-recipeId="@Model.Id" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Usuń przepis">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+        <a asp-controller="Recipe" asp-action="Edit" asp-route-recipeId="@Model.Id" type="button" class="btn btn-sub btn-info has-tooltip" data-toggle="tooltip" data-placement="left" title="Edytuj przepis">
+            <i class="fa-solid fa-pen-to-square"></i>
+        </a>
     </div>
 </div>
 
@@ -181,22 +234,36 @@
         }
         
         function submitComment(){
-            let data = $('#comment').serialize();
-            console.log(data)
+            let data = $('#comment-content').val();
+            $.ajax({
+                url: '/comment/add',
+                type: 'POST',
+                data:{
+                  RecipeId: @Model.Id,
+                  Content: data  
+                },
+                success: function(){
+                        
+                    },
+                error: function(){
+                    
+                    }
+            });
         }
     </script>
 }
 
 @section Styles{
     <style>
+    .ali {
+        float: right;
+        margin-bottom: 15px;
+        margin-top: 5px;
+    }
     .rec {
         height: 400px;
         width: 70%;
         object-fit: contain;
-    }
-
-    .lin {
-        white-space: pre-line;
     }
 
     .l-bor {

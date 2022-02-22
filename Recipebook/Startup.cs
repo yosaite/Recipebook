@@ -38,7 +38,7 @@ namespace Recipebook
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IRecipeService, RecipeService>();
             services.AddScoped<IFileService, FileService>();
-
+            services.AddScoped<ICommentService, CommentService>();
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)

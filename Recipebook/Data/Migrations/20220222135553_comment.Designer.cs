@@ -9,8 +9,8 @@ using Recipebook.Data;
 namespace Recipebook.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220222111917_CommentUpdate")]
-    partial class CommentUpdate
+    [Migration("20220222135553_comment")]
+    partial class comment
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -228,16 +228,22 @@ namespace Recipebook.Migrations
 
             modelBuilder.Entity("Recipebook.Models.Comment", b =>
                 {
+                    b.Property<ulong>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint unsigned");
+
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("varchar(255)");
-
-                    b.Property<ulong>("RecipeId")
-                        .HasColumnType("bigint unsigned");
 
                     b.Property<string>("Content")
                         .HasColumnType("longtext");
 
-                    b.HasKey("ApplicationUserId", "RecipeId");
+                    b.Property<ulong>("RecipeId")
+                        .HasColumnType("bigint unsigned");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("RecipeId");
 
@@ -426,9 +432,7 @@ namespace Recipebook.Migrations
                 {
                     b.HasOne("Recipebook.Models.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ApplicationUserId");
 
                     b.HasOne("Recipebook.Models.Recipe", "Recipe")
                         .WithMany("Comments")
