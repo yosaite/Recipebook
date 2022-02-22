@@ -1,10 +1,9 @@
-using System.Globalization;
-
 namespace Recipebook.ViewModel
 {
     public class CommentVM
     {
-        public ulong RecipeId { get; set; }
         public string Content { get; set; }
+        public string UserName { get; set; }
+        public string Avatar { get; set; }
     }
 }
