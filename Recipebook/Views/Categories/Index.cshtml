@@ -10,9 +10,9 @@
         {
             <div class="col-md-4 d-flex">
                 <div class="card pop mb-4 box-shadow flex-fill">
-                    @if (@item.Image != null && @item.Image.Path != "")
+                    @if (item.Image != null && item.Image.Path != "")
                     {
-                        <img class="card-img" alt="Card image cap" src="@item.Image.Path">
+                        <img class="card-img" alt="Card image cap" src="images/@item.Image.Path">
                     }
                     else
                     {
@@ -21,7 +21,9 @@
                     <div class="card-img-overlay"></div>
                     <div class="card-footer bg-dark">
                         <div class="align-items-center d-flex justify-content-center">
-                            <h5 class="text-white"><a asp-controller="Home" asp-action="Index" asp-route-categoryId="@item.Id" asp-route-categoryName="@item.Name" class="des stretched-link">@item.Name</a></h5>
+                            <h5 class="text-white">
+                                <a asp-controller="Home" asp-action="Index" asp-route-categoryId="@item.Id" asp-route-categoryName="@item.Name" class="des stretched-link">@item.Name</a>
+                            </h5>
                         </div>
                     </div>
                 </div>
@@ -30,8 +32,28 @@
     </div>
 </div>
 
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <a asp-controller="Categories" asp-action="Add" class="btn-group-fab" role="group" aria-label="FAB Menu">
+        <div>
+            <button type="button" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="left" title="Dodaj kategorie">
+                <i class="fa-solid fa-plus fa-2xl"></i>
+            </button>
+        </div>
+    </a>
+}
+
+@section Scripts
+{
+    <script>
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+}
+
 @section Styles{
-<style>
+    <style>
     .card-img {
         height: 225px;
         width: 100%;
@@ -50,5 +72,51 @@
         z-index: 3;
         border-color: grey !important;
     }
+    
+    body { width: 100%; height: 100%; }
+        .btn-group-fab {
+          position: fixed;
+          width: 50px;
+          height: auto;
+          right: 20px; bottom: 20px;
+        }
+        .btn-group-fab div {
+          position: relative; width: 100%;
+          height: auto;
+        }
+        .btn-group-fab .btn {
+          position: absolute;
+          bottom: 0;
+          border-radius: 50%;
+          display: block;
+          margin-bottom: 4px;
+          width: 40px; height: 40px;
+          margin: 4px auto;
+        }
+        .btn-group-fab .btn-main {
+          width: 50px; height: 50px;
+          right: 50%; margin-right: -25px;
+          z-index: 9;
+        }
+        .btn-group-fab .btn-sub {
+          bottom: 0; z-index: 8;
+          right: 50%;
+          margin-right: -20px;
+          -webkit-transition: all 2s;
+          transition: all 0.5s;
+        }
+        .btn-group-fab.active .btn-sub:nth-child(2) {
+          bottom: 60px;
+        }
+        .btn-group-fab.active .btn-sub:nth-child(3) {
+          bottom: 110px;
+        }
+        .btn-group-fab.active .btn-sub:nth-child(4) {
+          bottom: 160px;
+        }
+        .btn-group-fab .btn-sub:nth-child(5) {
+          bottom: 210px;
+        }
 </style>
 }
+

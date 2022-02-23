@@ -37,5 +37,26 @@ namespace Recipebook.Services
             await _dbContext.Categories.AddAsync(category);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task EditCategory(AddCategoryVM addCategoryVm)
+        {
+            var category = _mapper.Map<Category>(addCategoryVm);
+            var dbCategory = await _dbContext.Categories.Where(z => z.Id == category.Id).Include(b=>b.Image).FirstOrDefaultAsync();
+            if (dbCategory == null) return;
+            if (addCategoryVm.File != null)
+            {
+                var image = await _fileService.SaveImage(addCategoryVm.File);
+                dbCategory.Image = image;
+            }
+            
+            dbCategory.Name = category.Name;
+            _dbContext.Categories.Update(dbCategory);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<Category> GetCategory(ulong categoryId)
+        {
+            return await _dbContext.Categories.Include(d=>d.Image).Where(z => z.Id == categoryId).FirstOrDefaultAsync();
+        }
     }
 }

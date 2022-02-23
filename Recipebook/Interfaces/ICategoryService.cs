@@ -9,5 +9,7 @@ namespace Recipebook.Interfaces
     {
         public List<Category> GetCategories();
         Task AddCategory(AddCategoryVM addCategoryVm);
+        Task EditCategory(AddCategoryVM addCategoryVm);
+        Task<Category> GetCategory(ulong categoryId);
     }
 }
