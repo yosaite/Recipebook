@@ -8,5 +8,6 @@ namespace Recipebook.Interfaces
     public interface IFileService
     {
         Task<List<Image>> SaveImages(IEnumerable<IFormFile> formFiles);
+        Task<Image> SaveImage(IFormFile formFile);
     }
 }

@@ -39,5 +39,20 @@ namespace Recipebook.Services
             }
             return images;
         }
+        
+        public async Task<Image> SaveImage(IFormFile formFile)
+        {
+            if (formFile == null) return new Image();
+            var path = Path.Combine(_environment.WebRootPath, "images");
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            var img = new Image(){Path = $"{Guid.NewGuid()}.{formFile.FileName.Split('.').Last()}"};
+            await using (var stream = File.Create(Path.Combine(path, img.Path)))
+            {
+                await formFile.CopyToAsync(stream);
+            }
+
+            return img;
+        }
+        
     }
 }
