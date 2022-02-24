@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Recipebook.Interfaces;
@@ -14,10 +15,12 @@ namespace Recipebook.Controllers
     {
         private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
-        public CategoriesController(ICategoryService categoryService, IMapper mapper)
+        private readonly UserManager<User> _userManager;
+        public CategoriesController(ICategoryService categoryService, IMapper mapper, UserManager<User> userManager)
         {
             _categoryService = categoryService;
             _mapper = mapper;
+            _userManager = userManager;
         }
         
         [HttpPost]
@@ -56,6 +59,18 @@ namespace Recipebook.Controllers
             var categoryVm = _mapper.Map<AddCategoryVM>(category);
             ViewBag.Edit = true;
             return View("AddOrEdit",categoryVm);
+        }
+        
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(ulong categoryId)
+        {
+            var category = await _categoryService.GetCategory(categoryId);
+            if (category == null) return RedirectToAction("Index", "Home");
+            
+            await _categoryService.DeleteCategory(categoryId);
+            
+            return RedirectToAction("Index", "Categories");
         }
         
         public IActionResult Index()

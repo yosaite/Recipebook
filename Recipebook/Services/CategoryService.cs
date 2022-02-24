@@ -22,6 +22,12 @@ namespace Recipebook.Services
             _mapper = mapper;
             _fileService = fileService;
         }
+        
+        public async Task<Category> GetCategory(ulong categoryId)
+        {
+            return await _dbContext.Categories.Include(d=>d.Image).Where(z => z.Id == categoryId).FirstOrDefaultAsync();
+        }
+        
         public List<Category> GetCategories()
         {
             return _dbContext.Categories.Include(m => m.Image).OrderBy(c => c.Name).ToList();
@@ -54,9 +60,16 @@ namespace Recipebook.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Category> GetCategory(ulong categoryId)
+        public async Task DeleteCategory(ulong categoryId)
         {
-            return await _dbContext.Categories.Include(d=>d.Image).Where(z => z.Id == categoryId).FirstOrDefaultAsync();
+            var category = await _dbContext.Categories.Where(c => c.Id == categoryId).FirstOrDefaultAsync();
+            if (category != null)
+            {
+                _dbContext.Categories.Remove(category);
+            }
+            
+            await _dbContext.SaveChangesAsync();
         }
+
     }
 }

@@ -85,6 +85,7 @@ namespace Recipebook.Controllers
             {
                 var userId = _userManager.GetUserId(HttpContext.User);
                 addRecipeVM.UserId = userId;
+                
                 if (addRecipeVM.Id != 0)
                 {
                     var recipe = await _recipeService.EditRecipe(addRecipeVM);
@@ -96,7 +97,15 @@ namespace Recipebook.Controllers
                     return RedirectToAction("Recipe", "Recipe", new {recipeId = recipe.Id});
                 }
             }
-            ViewBag.Edit = false;
+
+            ViewBag.Edit = addRecipeVM.Id != 0;
+            
+            addRecipeVM.CategoriesList = _categoryService.GetCategories().Select(i => new SelectListItem()
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            
             return View("AddOrEdit",addRecipeVM);
         }
 

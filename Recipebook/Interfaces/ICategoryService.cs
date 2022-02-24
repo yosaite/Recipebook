@@ -11,5 +11,6 @@ namespace Recipebook.Interfaces
         Task AddCategory(AddCategoryVM addCategoryVm);
         Task EditCategory(AddCategoryVM addCategoryVm);
         Task<Category> GetCategory(ulong categoryId);
+        Task DeleteCategory(ulong categoryId);
     }
 }

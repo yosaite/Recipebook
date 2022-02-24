@@ -10,12 +10,18 @@ else
 }
 
 <div class="text-center">
-    <div class="card mb-4 box-shadow bg-light" style="border-radius: 25px">
-        <h1 class="display-4">Witejcie</h1> <br/>
-        <p>Tukej bydzie kejś fajnŏ ksiōnżka z receptami.</p>
-        <p>Może niy lepszŏ ale jako tako.</p>
+    <div class="card mb-4 box-shadow bg-white" style="border-radius: 25px">
+        <img class="pt-3 pb-3 mx-auto d-block" src="https://1.bp.blogspot.com/-h89dDVX-2P4/WrEDtOjxF1I/AAAAAAAAEFQ/5BWT4UrZlUsOQsyVGmsPMT-cPJkNOL8ewCK4BGAYYCw/s1600/Dapper.jpg"/>
+        @* <h1 class="display-4">Witejcie</h1> <br/> *@
+        @* <p>Tukej bydzie kejś fajnŏ ksiōnżka z receptami.</p> *@
+        @* <p>Może niy lepszŏ ale jako tako.</p> *@
     </div>
 </div>
+
+
+@* <div class="border-top border-bottom border-dark"> *@
+@*     <img class="pt-3 pb-3 mx-auto d-block" src="https://1.bp.blogspot.com/-h89dDVX-2P4/WrEDtOjxF1I/AAAAAAAAEFQ/5BWT4UrZlUsOQsyVGmsPMT-cPJkNOL8ewCK4BGAYYCw/s1600/Dapper.jpg"/> *@
+@* </div> *@
 
 <div class="album py-4" style="border-radius: 25px">
     <div class="container">
@@ -27,7 +33,23 @@ else
             <hr/>
         }
         <div class="row">
-            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            @if (this.User.IsInRole("Admin") && ViewBag.CategoryId != 0)
+            {
+                <div class="btn-group-fab" role="group" aria-label="FAB Menu">
+                    <div>
+                        <button type="button" class="btn btn-main btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Menu">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <a asp-controller="Categories" asp-action="Delete" asp-route-categoryId="@ViewBag.CategoryId" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Usuń kategorie">
+                            <i class="fa-solid fa-xmark"></i>
+                        </a>
+                        <a asp-controller="Categories" asp-action="Edit" asp-route-categoryId="@ViewBag.CategoryId" type="button" class="btn btn-sub btn-info has-tooltip" data-toggle="tooltip" data-placement="left" title="Edytuj kategorie">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+            else if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 <a asp-controller="Recipe" asp-action="Add" class="btn-group-fab" role="group" aria-label="FAB Menu">
                     <div>
@@ -78,9 +100,9 @@ else
 @section Scripts
 {
     <script>
-        $(function () {
-          $('[data-toggle="tooltip"]').tooltip()
-        })
+        $('.btn-group-fab').on('click', '.btn', function() {$('.btn-group-fab').toggleClass('active');});
+                $('[data-toggle="tooltip"]').tooltip()        
+                $('has-tooltip').tooltip();
     </script>
 }
 

@@ -14,6 +14,7 @@ namespace Recipebook.ViewModel
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Nazwa musi mieć pomiędzy {2} - {1} znaków.")]
         [DataType(DataType.Text)]
         public string Name { get; set; }
+        [Required]
         public List<string> Ingredients { get; set; }
         [Required]
         [StringLength(2000, MinimumLength = 20, ErrorMessage = "Sposób przygotowania musi mieć pomiędzy {2} - {1} znaków.")]
@@ -27,6 +28,7 @@ namespace Recipebook.ViewModel
         public uint PreparationTime { get; set; }
         [Required]
         public uint Yields { get; set; }
+        [Required(ErrorMessage = "Wymagana przynajmniej 1 kategoria")]
         public List<ulong> SelectedCategoriesIds { get; set; } 
         public IEnumerable<SelectListItem> CategoriesList { get; set; }
         public List<Image> Images { get; set; }

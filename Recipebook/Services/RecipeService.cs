@@ -143,6 +143,7 @@ namespace Recipebook.Services
             await _dbContext.SaveChangesAsync();
             return recipe;
         }
+        
         public async Task DeleteRecipe(ulong id)
         {
             var recipe = await _dbContext.Recipes.Where(c => c.Id == id).FirstOrDefaultAsync();
@@ -153,6 +154,7 @@ namespace Recipebook.Services
 
             await _dbContext.SaveChangesAsync();
         }
+        
         public async Task<Recipe> EditRecipe(AddRecipeVM addRecipeVM)
         {
             var recipe = _mapper.Map<Recipe>(addRecipeVM);
@@ -182,6 +184,7 @@ namespace Recipebook.Services
             await _dbContext.SaveChangesAsync();
             return dbRecipe;
         }
+        
         public async Task<bool> Rate(string userId, ulong recipeId, int rate)
         {
             if (rate is > 5 or < 0) return false;
@@ -211,10 +214,12 @@ namespace Recipebook.Services
             await _dbContext.SaveChangesAsync();
             return true;
         }
+        
         public async Task<double> GetUserRate(string userId, ulong recipeId)
         {
             return await _dbContext.Rates.Where(c => c.UserId == userId && c.RecipeId == recipeId).Select(z => z.Value).FirstOrDefaultAsync();
         }
+        
         public async Task<double> GetRecipeRate(ulong recipeId)
         {
             return Math.Round(Convert.ToDouble(await _dbContext.Rates.Where(r => r.RecipeId == recipeId)

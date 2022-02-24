@@ -29,10 +29,12 @@ namespace Recipebook.Controllers
             _userManager = userManager;
             _categoryService = categoryService;
         }
+        
         [HttpGet]
         public async Task<IActionResult> Index(ulong categoryId = 0,string categoryName="")
         {
             ViewBag.ListTitle = categoryName;
+            ViewBag.CategoryId = categoryId;
             return View(await _recipeService.GetRecipesVM(categoryId));
         }
         

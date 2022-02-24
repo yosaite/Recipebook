@@ -32,7 +32,7 @@
     </div>
 </div>
 
-@if (User.Identity != null && User.Identity.IsAuthenticated)
+@if (User.Identity != null && User.Identity.IsAuthenticated && this.User.IsInRole("Admin"))
 {
     <a asp-controller="Categories" asp-action="Add" class="btn-group-fab" role="group" aria-label="FAB Menu">
         <div>

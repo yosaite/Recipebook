@@ -22,7 +22,7 @@
                             @foreach (var img in @Model.Images)
                             {
                                 <div class="carousel-item @(first ? Html.Raw("active") : Html.Raw(""))">
-                                    <img class="d-block w-100 rec" src=@($"/images/{@img.Path}") alt="">
+                                    <img class="d-block w-100 rec" src=@($"/images/{@img.Path}") alt="" data-toggle="modal" data-target="#exampleModalCenter" data-image="@img.Path" >
                                 </div>
                                 first = false;
                             }
@@ -75,12 +75,11 @@
                             @if (User.Identity is {IsAuthenticated: true })
                             {
                                 <form method="post" id="recipe-form" data-ajax="true" data-ajax-url="/recipe/rate" data-ajax-method="post"
-                                      data-ajax-begin="rateOnBegin" 
+                                      data-ajax-begin="rateOnBegin"
                                       data-ajax-success="rateOnSuccess">
                                     <input type="text" name="recipeId" value="@Model.Id" hidden/>
                                     <input name="rate" id="rate-id" type="text" class="rating" hidden>
                                 </form>
-                                
                             }
                         </div>
                     </div>
@@ -134,7 +133,7 @@
                                 <div class="media-body">
                                     <h5 class="mt-0 font-weight-bold blue-text">@User.Identity.Name</h5>
                                     <div class="form-group basic-textarea rounded-corners">
-                                        <form method="post" asp-controller="Comment" asp-action="Add" data-ajax="true" data-ajax-method="post" data-ajax-begin="commentOnBegin" data-ajax-success="commentOnSuccess"> 
+                                        <form method="post" asp-controller="Comment" asp-action="Add" data-ajax="true" data-ajax-method="post" data-ajax-begin="commentOnBegin" data-ajax-success="commentOnSuccess">
                                             <input type="text" name="recipeId" value="@Model.Id" hidden/>
                                             <textarea name="content" class="form-control z-depth-1" id="comment-content" rows="3" placeholder="Napisz swój komentarz..."></textarea>
                                             <button id="comment-button" type="submit" class="btn btn-primary ali">Dodaj komentarz</button>
@@ -146,8 +145,8 @@
                         <div class="row d-flex justify-content-center mt-3">
                             <div class="col-md-12 col-lg-12">
                                 <div class="card" id="comment-card">
-                               
-                                
+
+
                                 </div>
                             </div>
                         </div>
@@ -158,12 +157,29 @@
     </div>
 </div>
 
+<!-- Pop-up image -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">@Model.Name</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img class="d-block w-100" id="modal-img" src="" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+
 @if (User.Identity is {IsAuthenticated: true })
 {
     <div class="btn-group-fab" role="group" aria-label="FAB Menu">
         <div>
             <button type="button" class="btn btn-main btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Menu">
-                <i class="fa fa-bars"></i>
+                <i class="fa-solid fa-bars"></i>
             </button>
             <a asp-controller="Recipe" asp-action="Delete" asp-route-recipeId="@Model.Id" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Usuń przepis">
                 <i class="fa-solid fa-xmark"></i>
@@ -180,6 +196,10 @@
 {
     <script>
     
+        $('div img').click(function (e){
+            $('#modal-img').attr('src', '/images/' + $(this).attr('data-image'))
+        });
+           
         $('.btn-group-fab').on('click', '.btn', function() {$('.btn-group-fab').toggleClass('active');});
         $('[data-toggle="tooltip"]').tooltip()        
         $('has-tooltip').tooltip();
@@ -243,6 +263,7 @@
                     }
             });
         }
+        
         function getUserAvatar(){
             $.ajax({
                 url: '/user/getAvatar',
@@ -255,10 +276,12 @@
                     }
             });
         }
+        
         $( document ).ready(function() {
             getComments();
             getUserAvatar();
         });
+        
     </script>
 }
 
