@@ -18,7 +18,6 @@ namespace Recipebook.Services
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
         private readonly IFileService _fileService;
-
         public RecipeService(ApplicationDbContext dbContext, IMapper mapper, IWebHostEnvironment environment,
             IFileService fileService)
         {
@@ -67,32 +66,55 @@ namespace Recipebook.Services
             return recipe;
         }
         
+        
+        
         // Get all recipes
-        public async Task<List<RecipeVM>> GetRecipesVM()
+        public async Task<List<RecipeVM>> GetRecipesVM(int page = 0, RecipeSort sort = RecipeSort.Newest)
         {
-            return await _dbContext.Recipes.Include(m => m.Images)
+            if (page == 0)
+                page = 1;
+            var skip = (page - 1) * Extensions.Limit;
+
+            var recipes = _dbContext.Recipes.Include(m => m.Images)
                 .Include(m => m.User)
-                .Select(n=>new RecipeVM()
+                .Select(n => new RecipeVM()
                 {
                     Id = n.Id,
                     Name = n.Name,
                     Description = n.Description,
                     Images = n.Images,
                     Created = n.Created,
-                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Value))/Convert.ToDouble(n.Rates.Count),1)
-                    
-                })
-                .ToListAsync();
-        }
-        // Get category recipes
-        public async Task<List<RecipeVM>> GetRecipesVM(ulong categoryId)
-        {
-            if (categoryId == 0)
-            {
-                return await GetRecipesVM();
-            }
+                    Rate = n.Rates.Count == 0
+                        ? 0
+                        : Math.Round(Convert.ToDouble(n.Rates.Sum(t => t.Value)) / Convert.ToDouble(n.Rates.Count), 1)
 
-            return await _dbContext.Categories.Where(z=>z.Id == categoryId)
+                });
+            recipes = sort switch
+            {
+                RecipeSort.Newest => recipes.OrderByDescending(z => z.Created),
+                RecipeSort.Oldest => recipes.OrderBy(z => z.Created),
+                RecipeSort.HighestRate => recipes.OrderByDescending(z => z.Rate),
+                RecipeSort.LowestRate => recipes.OrderBy(z => z.Rate),
+                _ => recipes
+            };
+
+            return await recipes.Skip(skip).Take(Extensions.Limit).ToListAsync();
+        }
+
+        public async Task<int> GetRecipesVMCount() => await _dbContext.Recipes.CountAsync();
+        
+        
+        
+        // Get category recipes
+        public async Task<List<RecipeVM>> GetRecipesVM(ulong categoryId, int page = 0, RecipeSort sort = RecipeSort.Newest)
+        {
+            if (categoryId == 0) return await GetRecipesVM();
+
+            if (page == 0)
+                page = 1;
+            var skip = (page - 1) * Extensions.Limit;
+            
+            var recipes = _dbContext.Categories.Where(z=>z.Id == categoryId)
                 .SelectMany(c => c.Recipes).Include(d=>d.Images)
                 .Include(t=>t.Rates)
                 .Select(n=>new RecipeVM()
@@ -104,33 +126,66 @@ namespace Recipebook.Services
                     Created = n.Created,
                     Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Value))/Convert.ToDouble(n.Rates.Count),1)
                     
-                })
-                .ToListAsync();
+                });
+            recipes = sort switch
+            {
+                RecipeSort.Newest => recipes.OrderByDescending(z => z.Created),
+                RecipeSort.Oldest => recipes.OrderBy(z => z.Created),
+                RecipeSort.HighestRate => recipes.OrderByDescending(z => z.Rate),
+                RecipeSort.LowestRate => recipes.OrderBy(z => z.Rate),
+                _ => recipes
+            };
+            return await recipes.Skip(skip).Take(Extensions.Limit).ToListAsync();
         }
+
+        public async Task<int> GetRecipesVMCount(ulong categoryId) => await _dbContext.Categories
+            .Where(z=>z.Id == categoryId)
+            .SelectMany(c => c.Recipes).CountAsync();
+        
+        
+        
         // Get user recipes
-        public async Task<List<RecipeVM>> GetRecipesVM(string userId)
+        public async Task<List<RecipeVM>> GetRecipesVM(string userId, int page = 1, RecipeSort sort = RecipeSort.Newest)
         {
             if (userId is null)
             {
                 return await GetRecipesVM();
             }
-            var recipes = await _dbContext.Recipes.Include(m => m.Images)
+            if (page == 0)
+                page = 1;
+            var skip = (page - 1) * Extensions.Limit;
+            var recipes = _dbContext.Recipes.Include(m => m.Images)
                 .Include(m => m.User)
                 .Where(c => c.UserId == userId)
-                .Select(n=>new RecipeVM()
+                .Select(n => new RecipeVM()
                 {
                     Id = n.Id,
                     Name = n.Name,
                     Description = n.Description,
                     Images = n.Images,
                     Created = n.Created,
-                    Rate = n.Rates.Count == 0?0:Math.Round(Convert.ToDouble(n.Rates.Sum(t=>t.Value))/Convert.ToDouble(n.Rates.Count),1)
-                    
-                })
-                .ToListAsync();
-            return recipes;
+                    Rate = n.Rates.Count == 0
+                        ? 0
+                        : Math.Round(Convert.ToDouble(n.Rates.Sum(t => t.Value)) / Convert.ToDouble(n.Rates.Count), 1)
+
+                });
+            recipes = sort switch
+            {
+                RecipeSort.Newest => recipes.OrderByDescending(z => z.Created),
+                RecipeSort.Oldest => recipes.OrderBy(z => z.Created),
+                RecipeSort.HighestRate => recipes.OrderByDescending(z => z.Rate),
+                RecipeSort.LowestRate => recipes.OrderBy(z => z.Rate),
+                _ => recipes
+            };
+            return await recipes.Skip(skip).Take(Extensions.Limit).ToListAsync();
         }
 
+        public async Task<int> GetRecipesVMCount(string userId) => await _dbContext.Recipes
+            .Include(m => m.User)
+            .Where(c => c.UserId == userId).CountAsync();
+
+
+        
         public async Task<Recipe> AddRecipe(AddRecipeVM addRecipeVM)
         {
             var recipe = _mapper.Map<Recipe>(addRecipeVM);
@@ -143,18 +198,6 @@ namespace Recipebook.Services
             await _dbContext.SaveChangesAsync();
             return recipe;
         }
-        
-        public async Task DeleteRecipe(ulong id)
-        {
-            var recipe = await _dbContext.Recipes.Where(c => c.Id == id).FirstOrDefaultAsync();
-            if (recipe != null)
-            {
-                _dbContext.Recipes.Remove(recipe);
-            }
-
-            await _dbContext.SaveChangesAsync();
-        }
-        
         public async Task<Recipe> EditRecipe(AddRecipeVM addRecipeVM)
         {
             var recipe = _mapper.Map<Recipe>(addRecipeVM);
@@ -184,6 +227,18 @@ namespace Recipebook.Services
             await _dbContext.SaveChangesAsync();
             return dbRecipe;
         }
+        public async Task DeleteRecipe(ulong id)
+        {
+            var recipe = await _dbContext.Recipes.Where(c => c.Id == id).FirstOrDefaultAsync();
+            if (recipe != null)
+            {
+                _dbContext.Recipes.Remove(recipe);
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        
         
         public async Task<bool> Rate(string userId, ulong recipeId, int rate)
         {
@@ -214,12 +269,10 @@ namespace Recipebook.Services
             await _dbContext.SaveChangesAsync();
             return true;
         }
-        
         public async Task<double> GetUserRate(string userId, ulong recipeId)
         {
             return await _dbContext.Rates.Where(c => c.UserId == userId && c.RecipeId == recipeId).Select(z => z.Value).FirstOrDefaultAsync();
         }
-        
         public async Task<double> GetRecipeRate(ulong recipeId)
         {
             return Math.Round(Convert.ToDouble(await _dbContext.Rates.Where(r => r.RecipeId == recipeId)

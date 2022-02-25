@@ -7,10 +7,13 @@ namespace Recipebook.Interfaces
 {
     public interface IRecipeService
     {
-        Task<List<RecipeVM>> GetRecipesVM();
+        Task<List<RecipeVM>> GetRecipesVM(int page = 0, RecipeSort sort = RecipeSort.Newest);
+        Task<int> GetRecipesVMCount();
         Task<RecipeVM> GetRecipeVM(ulong id);
-        Task<List<RecipeVM>> GetRecipesVM(ulong categoryId);
-        Task<List<RecipeVM>> GetRecipesVM(string userId);
+        Task<List<RecipeVM>> GetRecipesVM(ulong categoryId,int page = 0, RecipeSort sort = RecipeSort.Newest);
+        Task<int> GetRecipesVMCount(ulong categoryId);
+        Task<List<RecipeVM>> GetRecipesVM(string userId, int page = 1, RecipeSort sort = RecipeSort.Newest);
+        Task<int> GetRecipesVMCount(string userId);
         Task<Recipe> AddRecipe(AddRecipeVM addRecipeVM);
         Task DeleteRecipe(ulong id);
         Task<Recipe> EditRecipe(AddRecipeVM addRecipeVM);

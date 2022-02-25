@@ -123,7 +123,7 @@ namespace Recipebook.Controllers
             {
                 await _recipeService.DeleteRecipe(recipeId);
             }
-            return RedirectToAction("UserRecipes", "Home");
+            return RedirectToAction("IndexUser", "Home");
         }
 
         [HttpPost]

@@ -10,8 +10,16 @@ namespace Recipebook
         User,
         Admin
     }
+    public enum RecipeSort
+    {
+        Newest = 0,
+        Oldest = 1,
+        HighestRate = 2,
+        LowestRate = 3
+    }
     public static class Extensions
     {
+        public const int Limit = 3;
         public static void RunAppSetup(this IServiceCollection services)
         {
             CreateRoles(services);

@@ -30,22 +30,46 @@ namespace Recipebook.Controllers
             _categoryService = categoryService;
         }
         
+       
         [HttpGet]
-        public async Task<IActionResult> Index(ulong categoryId = 0,string categoryName="")
+        public async Task<IActionResult> Index(ulong categoryId = 0, int page = 1, RecipeSort sort = RecipeSort.Newest)
         {
-            ViewBag.ListTitle = categoryName;
-            ViewBag.CategoryId = categoryId;
-            return View(await _recipeService.GetRecipesVM(categoryId));
+            List<RecipeVM> recipes; 
+            if (categoryId == 0)
+            {
+                recipes = await _recipeService.GetRecipesVM(page, sort);
+                ViewBag.RecipesCount = await _recipeService.GetRecipesVMCount();
+                ViewBag.ListTitle = "";
+                ViewBag.CategoryId = 0;
+            }
+            else
+            {
+                var category = await _categoryService.GetCategory(categoryId);
+                recipes = await _recipeService.GetRecipesVM(categoryId, page, sort);
+                ViewBag.RecipesCount = await _recipeService.GetRecipesVMCount(category.Id);
+                ViewBag.ListTitle = category.Name;
+                ViewBag.CategoryId = category.Id;
+            }
+            ViewBag.Page = page;
+            ViewBag.Sort = sort;
+            return View("Index",recipes);
         }
         
         [HttpGet]
         [Authorize(Roles="User, Admin")]
-        public async Task<IActionResult> UserRecipes()
+        public async Task<IActionResult> IndexUser(int page = 1, RecipeSort sort = RecipeSort.Newest)
         {
             var userId = _userManager.GetUserId(HttpContext.User);
+            var recipes = await _recipeService.GetRecipesVM(userId, page, sort);
+            ViewBag.RecipesCount = await _recipeService.GetRecipesVMCount(userId);
             ViewBag.ListTitle = "Moje przepisy";
-            return View("Index", await _recipeService.GetRecipesVM(userId));
+            ViewBag.User = true;
+            ViewBag.Page = page;
+            ViewBag.Sort = sort;
+            return View("Index", recipes);
         }
+        
+        
         public IActionResult Privacy()
         {
             return View();
