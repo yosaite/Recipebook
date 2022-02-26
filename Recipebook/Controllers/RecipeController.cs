@@ -22,15 +22,17 @@ namespace Recipebook.Controllers
         private readonly UserManager<User> _userManager;
         private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
         public RecipeController(ILogger<RecipeController> logger, IRecipeService recipeService,
-            UserManager<User> userManager, ICategoryService categoryService, IMapper mapper)
+            UserManager<User> userManager, ICategoryService categoryService, IMapper mapper, IUserService userService)
         {
             _logger = logger;
             _recipeService = recipeService;
             _userManager = userManager;
             _categoryService = categoryService;
             _mapper = mapper;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -38,7 +40,11 @@ namespace Recipebook.Controllers
         {
             var recipe = await _recipeService.GetRecipeVM(recipeId);
             var userId = _userManager.GetUserId(HttpContext.User);
+            
             if(userId != null) recipe.UserRate = await _recipeService.GetUserRate(userId, recipeId);
+            
+            if(userId != null) recipe.Favorite = await _userService.GetFavorite(userId, recipeId);
+            
             return View(recipe);
         }
 
@@ -54,7 +60,9 @@ namespace Recipebook.Controllers
                     Value = i.Id.ToString()
                 })
             };
+            
             ViewBag.Edit = false;
+            
             return View("AddOrEdit",model);
         }
         
@@ -64,6 +72,7 @@ namespace Recipebook.Controllers
         {
             var recipe = await _recipeService.GetRecipe(recipeId);
             var recipeVm = _mapper.Map<AddRecipeVM>(recipe);
+            
             recipeVm.SelectedCategoriesIds = recipe.Categories.Select(m => m.Id).ToList();
             recipeVm.CategoriesList = _categoryService.GetCategories().Select(i => new SelectListItem()
             {
@@ -73,6 +82,7 @@ namespace Recipebook.Controllers
             
             ViewBag.ListTitle = $"Edytuj przepis - {recipe.Name}";
             ViewBag.Edit = true;
+            
             return View("AddOrEdit",recipeVm);
         }
 
@@ -89,11 +99,13 @@ namespace Recipebook.Controllers
                 if (addRecipeVM.Id != 0)
                 {
                     var recipe = await _recipeService.EditRecipe(addRecipeVM);
+                    
                     return RedirectToAction("Recipe", "Recipe", new {recipeId = recipe.Id});
                 }
                 else
                 { 
                     var recipe = await _recipeService.AddRecipe(addRecipeVM);
+                    
                     return RedirectToAction("Recipe", "Recipe", new {recipeId = recipe.Id});
                 }
             }
@@ -123,6 +135,7 @@ namespace Recipebook.Controllers
             {
                 await _recipeService.DeleteRecipe(recipeId);
             }
+            
             return RedirectToAction("IndexUser", "Home");
         }
 

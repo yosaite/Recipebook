@@ -22,5 +22,44 @@ namespace Recipebook.Services
                 .FirstOrDefaultAsync();
             return avatar != null ? avatar.Path : "no-image.png";
         }
+
+        public async Task<bool> Favorite(string userId, ulong recipeId)
+        {
+            var dbFavorite = await _dbContext.Favorites.Where(c => c.UserId == userId && c.RecipeId == recipeId)
+                .FirstOrDefaultAsync();
+            
+            if (dbFavorite != null)
+            {
+                _dbContext.Favorites.Remove(dbFavorite);
+                await _dbContext.SaveChangesAsync();
+                
+                return false;
+            }
+
+            var recipe = await _dbContext.Recipes.Where(m => m.Id == recipeId).FirstOrDefaultAsync();
+            if (recipe == null) return false;
+            
+            var user = await _dbContext.Users.Where(m => m.Id == userId).FirstOrDefaultAsync();
+            if (user == null) return false;
+            
+            var favorite = new Favorite()
+            {
+                Recipe = recipe,
+                User = user
+            };
+
+            await _dbContext.Favorites.AddAsync(favorite);
+            await _dbContext.SaveChangesAsync();
+            
+            return true;
+        }
+
+        public async Task<bool> GetFavorite(string userId, ulong recipeId)
+        {
+            var dbFavorite = await _dbContext.Favorites.Where(c => c.UserId == userId && c.RecipeId == recipeId)
+                .FirstOrDefaultAsync();
+
+            return dbFavorite != null;
+        }
     }
 }

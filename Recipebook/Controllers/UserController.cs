@@ -27,7 +27,18 @@ namespace Recipebook.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             if (user == null) return NotFound();
+            
             return Json(await _userService.GetAvatar(user));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> AddFavorite(ulong recipeId)
+        {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null) return NotFound();
+
+            return Json(await _userService.Favorite(user.Id, recipeId));
         }
     }
 }

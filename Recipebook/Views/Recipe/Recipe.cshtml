@@ -52,15 +52,18 @@
                         <div class="receipe-headline my-5">
                             @if (@Model.User == null)
                             {
-                                <small class="text-muted">Dodano: @Model.Created.ToString("dd MMMM yyyy") przez </small><br/>
-                                <small class="text-muted">Przez: Użytkownik nie istnieje</small>
+                                <small class="text-muted">Dodano: @Model.Created.ToString("dd MMMM yyyy"), przez użytkownika: Użytkownik nie istnieje</small><br/>
                             }
                             else
                             {
-                                <small class="text-muted">Dodano: @Model.Created.ToString("dd MMMM yyyy")</small><br/>
-                                <small class="text-muted">Przez: @Model.User.UserName</small>
+                                <small class="text-muted">Dodano: @Model.Created.ToString("dd MMMM yyyy"), przez użytkownika: @Model.User.UserName</small><br/>
                             }
-                            <h2 class="mt-2 mb-4">@Model.Name</h2>
+                            <h2 class="mt-2 mb-4">@Model.Name    
+                                @if (User.Identity is {IsAuthenticated: true })
+                                {
+                                    <i class="@(Model.Favorite?"fa-solid fa-heart fa-sm":"fa-regular fa-heart fa-sm")" id="favorite"></i>
+                                }
+                            </h2>
                             <div class="l-bor">
                                 <h6>Czas przygotowania: @Model.PreparationTime minut</h6>
                                 <h6>Porcje: @Model.Yields</h6>
@@ -195,7 +198,25 @@
 @section Scripts
 {
     <script>
-    
+        
+        $('#favorite').click(function (e){
+            $.ajax({
+                url: '/user/addFavorite',
+                type: 'post',
+                data: {
+                    RecipeId: @Model.Id
+                },
+                success: function (response){
+                    if (response == true){
+                        $('#favorite').attr('class', "fa-solid fa-heart fa-sm");
+                    }
+                    else{
+                        $('#favorite').attr('class', "fa-regular fa-heart fa-sm");
+                    }
+                },
+            });
+        });
+        
         $('div img').click(function (e){
             $('#modal-img').attr('src', '/images/' + $(this).attr('data-image'))
         });
@@ -287,6 +308,10 @@
 
 @section Styles{
     <style>
+    
+    #favorite{
+        color: #b21f2d;
+    }
     .ali {
         float: right;
         margin-bottom: 15px;

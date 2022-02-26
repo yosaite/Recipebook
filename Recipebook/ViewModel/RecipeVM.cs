@@ -20,5 +20,6 @@ namespace Recipebook.ViewModel
         public User User { get; set; }
         public double UserRate { get; set; } = 0;
         public double Rate { get; set; }
+        public bool Favorite { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace Recipebook.Data
         public DbSet<Image> Images { get; set; }
         public DbSet<Rate> Rates { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
