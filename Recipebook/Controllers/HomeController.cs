@@ -69,6 +69,19 @@ namespace Recipebook.Controllers
             return View("Index", recipes);
         }
         
+        [HttpGet]
+        [Authorize(Roles="User, Admin")]
+        public async Task<IActionResult> IndexUserFavorite(int page = 1, RecipeSort sort = RecipeSort.Newest)
+        {
+            var userId = _userManager.GetUserId(HttpContext.User);
+            var recipes = await _recipeService.GetFavoriteRecipesVM(userId, page, sort);
+            ViewBag.RecipesCount = await _recipeService.GetFavoriteRecipesVMCount(userId);
+            ViewBag.ListTitle = "Ulubione przepisy";
+            ViewBag.UserFavorite = true;
+            ViewBag.Page = page;
+            ViewBag.Sort = sort;
+            return View("Index", recipes);
+        }
         
         public IActionResult Privacy()
         {

@@ -62,6 +62,7 @@
                                 @if (User.Identity is {IsAuthenticated: true })
                                 {
                                     <i class="@(Model.Favorite?"fa-solid fa-heart fa-sm":"fa-regular fa-heart fa-sm")" id="favorite"></i>
+                                    <div class="spinner-border spinner-border-sm spin" id="favorite-loading" role="status" hidden></div>
                                 }
                             </h2>
                             <div class="l-bor">
@@ -207,6 +208,8 @@
                     RecipeId: @Model.Id
                 },
                 success: function (response){
+                    $('#favorite').attr('hidden', false);
+                    $('#favorite-loading').attr('hidden', true);
                     if (response == true){
                         $('#favorite').attr('class', "fa-solid fa-heart fa-sm");
                     }
@@ -214,6 +217,10 @@
                         $('#favorite').attr('class', "fa-regular fa-heart fa-sm");
                     }
                 },
+                beforeSend: function (){
+                    $('#favorite').attr('hidden', true);
+                    $('#favorite-loading').attr('hidden', false);
+                }
             });
         });
         
@@ -308,7 +315,11 @@
 
 @section Styles{
     <style>
-    
+    .spin{
+        width: 2rem;
+        height: 2rem;
+        color: #b21f2d;
+    }
     #favorite{
         color: #b21f2d;
     }

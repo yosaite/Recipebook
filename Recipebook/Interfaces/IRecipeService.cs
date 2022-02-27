@@ -21,5 +21,7 @@ namespace Recipebook.Interfaces
         Task<double> GetUserRate(string userId, ulong recipeId);
         Task<Recipe> GetRecipe(ulong id);
         Task<double> GetRecipeRate(ulong recipeId);
+        Task<List<RecipeVM>> GetFavoriteRecipesVM(string userId, int page = 1, RecipeSort sort = RecipeSort.Newest);
+        Task<int> GetFavoriteRecipesVMCount(string userId);
     }
 }

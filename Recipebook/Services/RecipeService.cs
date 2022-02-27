@@ -184,6 +184,45 @@ namespace Recipebook.Services
             .Include(m => m.User)
             .Where(c => c.UserId == userId).CountAsync();
 
+        public async Task<List<RecipeVM>> GetFavoriteRecipesVM(string userId, int page = 1, RecipeSort sort = RecipeSort.Newest)
+        {
+            if (userId is null)
+            {
+                return await GetRecipesVM();
+            }
+            if (page == 0)
+                page = 1;
+            var skip = (page - 1) * Extensions.Limit;
+            var recipes = _dbContext.Favorites.Where(z=>z.UserId == userId)
+                .Include(m=>m.Recipe)
+                .Include(i=>i.Recipe.Images)
+                .Include(i=>i.Recipe.Rates)
+                .Select(n=>new RecipeVM()
+                {
+                    Id = n.Recipe.Id,
+                    Name = n.Recipe.Name,
+                    Description = n.Recipe.Description,
+                    Images = n.Recipe.Images,
+                    Created = n.Recipe.Created,
+                    Rate = n.Recipe.Rates.Count == 0
+                        ? 0
+                        : Math.Round(Convert.ToDouble(n.Recipe.Rates.Sum(t => t.Value)) / Convert.ToDouble(n.Recipe.Rates.Count), 1)
+
+                });
+            recipes = sort switch
+            {
+                RecipeSort.Newest => recipes.OrderByDescending(z => z.Created),
+                RecipeSort.Oldest => recipes.OrderBy(z => z.Created),
+                RecipeSort.HighestRate => recipes.OrderByDescending(z => z.Rate),
+                RecipeSort.LowestRate => recipes.OrderBy(z => z.Rate),
+                _ => recipes
+            };
+            return await recipes.Skip(skip).Take(Extensions.Limit).ToListAsync();
+        }
+
+        public async Task<int> GetFavoriteRecipesVMCount(string userId) => await _dbContext.Favorites
+            .Include(m => m.User)
+            .Where(c => c.UserId == userId).CountAsync();
 
         
         public async Task<Recipe> AddRecipe(AddRecipeVM addRecipeVM)
