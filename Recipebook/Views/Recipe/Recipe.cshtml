@@ -22,7 +22,7 @@
                             @foreach (var img in @Model.Images)
                             {
                                 <div class="carousel-item @(first ? Html.Raw("active") : Html.Raw(""))">
-                                    <img class="d-block w-100 rec" src=@($"/images/{@img.Path}") alt="" data-toggle="modal" data-target="#exampleModalCenter" data-image="@img.Path" >
+                                    <img class="d-block w-100 rec" src=@($"/images/{@img.Path}") alt="" data-toggle="modal" data-target="#exampleModalCenter" data-image="@img.Path">
                                 </div>
                                 first = false;
                             }
@@ -58,17 +58,14 @@
                             {
                                 <small class="text-muted">Dodano: @Model.Created.ToString("dd MMMM yyyy"), przez użytkownika: @Model.User.UserName</small><br/>
                             }
-                            <h2 class="mt-2 mb-4">@Model.Name    
+                            <h2 class="mt-2 mb-4">
+                                @Model.Name
                                 @if (User.Identity is {IsAuthenticated: true })
                                 {
-                                    <i class="@(Model.Favorite?"fa-solid fa-heart fa-sm":"fa-regular fa-heart fa-sm")" id="favorite"></i>
+                                    <i class="@(Model.Favorite ? "fa-solid fa-heart fa-sm" : "fa-regular fa-heart fa-sm")" id="favorite"></i>
                                     <div class="spinner-border spinner-border-sm spin" id="favorite-loading" role="status" hidden></div>
                                 }
                             </h2>
-                            <div class="l-bor">
-                                <h6>Czas przygotowania: @Model.PreparationTime minut</h6>
-                                <h6>Porcje: @Model.Yields</h6>
-                            </div>
                         </div>
                     </div>
 
@@ -89,69 +86,84 @@
                     </div>
                 </div>
 
-                <!--Description -->
-                <div class="row">
-                    <div class="col-12 col-lg-12 mb-5">
-                        @Model.Description
+                <div class="single-post__top__text">
+                    <p>@Model.Description</p>
+                </div>
+                <div class="single-post__recipe__details">
+                    <div class="single-post__recipe__details__option">
+                        <ul>
+                            <li>
+                                <h5><i class="fa-solid fa-user"></i> Porcje</h5>
+                                <span>@Model.Yields porcji</span>
+                            </li>
+                            <li>
+                                <h5><i class="fa-solid fa-clock"></i> Czas przyg.</h5>
+                                <span>@Model.PreparationTime minute</span>
+                            </li>
+                            <li>
+                                <h5><i class="fa-solid fa-book"></i> Kategorie</h5>
+                                <span>
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                        @Html.Raw(category.Name)
+                                        if (category != Model.Categories.Last())
+                                        {
+                                            @Html.Raw(", ")
+                                        }
+                                    }
+                                </span>
+                            </li>
+                        </ul>
                     </div>
-
-                    <!--Directions -->
-                    <div class="col-12 col-lg-8">
-                        <div class="single-preparation-step">
-                            <h4>Sposób przygotowania</h4>
-                            <br/>
-                            @foreach (var (item,index) in Model.Directions.Split("\r\n\r\n").Select((value, i) => (value, i)))
-                            {
-                                <div class="row">
-                                    <h2 class="col-1">@(index + 1)</h2>
-                                    <div class="col">
-                                        <p>@item</p>
-                                    </div>
-                                </div>
-                                <hr/>
-                            }
-                        </div>
-                    </div>
-
-                    <!-- Ingredients -->
-                    <div class="col-12 col-lg-4 l-bor-2 pl-4">
-                        <div class="ingredients">
-                            <h4>Składniki</h4>
+                    <div class="single-post__recipe__details__indegradients">
+                        <h5>Składniki</h5>
+                        <ul>
                             @foreach (var item in Model.Ingredients.Select((value, index) => (value,index)))
                             {
-                                <div class="custom-control custom-checkbox spac">
+                                <li class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" id=@(item.index.ToString())>
                                     <label class="custom-control-label" for=@(item.index.ToString())>@item.value</label>
-                                </div>
+                                </li>
                             }
-                        </div>
+                        </ul>
                     </div>
+                    <div class="single-post__recipe__details__direction">
+                        <h5>Sposób przygotowania</h5>
+                        <ul>
+                            @foreach (var (item,index) in Model.Directions.Split("\r\n\r\n").Select((value, i) => (value, i)))
+                            {
+                                <li>
+                                    <span>@(index + 1).</span> @item
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
 
-                    <!-- Comments -->
-                    <div class="container pt-5">
-                        @if (User.Identity is {IsAuthenticated: true })
-                        {
-                            <div class="media mt-3 shadow-textarea">
-                                <img id="user-image" class="d-flex rounded-circle avatar z-depth-1-half mr-3" src="/no-image.png"
-                                     alt="Generic placeholder image" width="100px" height="100px">
-                                <div class="media-body">
-                                    <h5 class="mt-0 font-weight-bold blue-text">@User.Identity.Name</h5>
-                                    <div class="form-group basic-textarea rounded-corners">
-                                        <form method="post" asp-controller="Comment" asp-action="Add" data-ajax="true" data-ajax-method="post" data-ajax-begin="commentOnBegin" data-ajax-success="commentOnSuccess">
-                                            <input type="text" name="recipeId" value="@Model.Id" hidden/>
-                                            <textarea name="content" class="form-control z-depth-1" id="comment-content" rows="3" placeholder="Napisz swój komentarz..."></textarea>
-                                            <button id="comment-button" type="submit" class="btn btn-primary ali">Dodaj komentarz</button>
-                                        </form>
-                                    </div>
+                <!-- Comments -->
+                <div class="container pt-5">
+                    @if (User.Identity is {IsAuthenticated: true })
+                    {
+                        <div class="media mt-3 shadow-textarea">
+                            <img id="user-image" class="d-flex rounded-circle avatar z-depth-1-half mr-3" src="/no-image.png"
+                                 alt="Generic placeholder image" width="100px" height="100px">
+                            <div class="media-body">
+                                <h5 class="mt-0 font-weight-bold blue-text">@User.Identity.Name</h5>
+                                <div class="form-group basic-textarea rounded-corners">
+                                    <form method="post" asp-controller="Comment" asp-action="Add" data-ajax="true" data-ajax-method="post" data-ajax-begin="commentOnBegin" data-ajax-success="commentOnSuccess">
+                                        <input type="text" name="recipeId" value="@Model.Id" hidden/>
+                                        <textarea name="content" class="form-control z-depth-1" id="comment-content" rows="3" placeholder="Napisz swój komentarz..."></textarea>
+                                        <button id="comment-button" type="submit" class="btn btn-primary ali">Dodaj komentarz</button>
+                                    </form>
                                 </div>
                             </div>
-                        }
-                        <div class="row d-flex justify-content-center mt-3">
-                            <div class="col-md-12 col-lg-12">
-                                <div class="card" id="comment-card">
+                        </div>
+                    }
+                    <div class="row d-flex justify-content-center mt-3">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="card" id="comment-card">
 
 
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -315,6 +327,134 @@
 
 @section Styles{
     <style>
+    
+    .single-post__top__text,
+    .single-post__middle__text {
+    	margin-bottom: 25px;
+    }
+    
+    .single-post__top__text p,
+    .single-post__middle__text p {
+    	font-size: 15px;
+    }
+    .single-post__recipe__details {
+    	border: 1px solid #e1e1e1;
+    	margin-bottom: 30px;
+    }
+    
+    .single-post__recipe__details__option {
+    	background: #f5f5f5;
+    	border-bottom: 1px solid #e1e1e1;
+    	padding-left: 30px;
+    	padding-right: 30px;
+    	padding-top: 25px;
+    	padding-bottom: 20px;
+    }
+    
+    .single-post__recipe__details__option ul {
+    	overflow: hidden;
+    }
+    
+    .single-post__recipe__details__option ul li {
+    	list-style: none;
+    	float: left;
+    	margin-right: 48px;
+    }
+    
+    .single-post__recipe__details__option ul li:last-child {
+    	margin-right: 0;
+    }
+    
+    .single-post__recipe__details__option ul li h5 {
+    	text-transform: uppercase;
+    	margin-bottom: 5px;
+    }
+    
+    .single-post__recipe__details__option ul li h5 i {
+    	font-size: 16px;
+    	margin-right: 5px;
+    }
+    
+    .single-post__recipe__details__option ul li span {
+    	font-size: 14px;
+    	color: #888888;
+    }
+    
+    .single-post__recipe__details__option ul li .primary-btn i {
+    	margin-right: 5px;
+    }
+    
+    .single-post__recipe__details__indegradients {
+    	padding-left: 30px;
+    	padding-right: 30px;
+    	padding-top: 25px;
+    	padding-bottom: 15px;
+    	border-bottom: 1px solid #e1e1e1;
+    }
+    
+    .single-post__recipe__details__indegradients h5 {
+    	font-size: 20px;
+    	color: #111111;
+    	text-transform: uppercase;
+    	margin-bottom: 10px;
+    }
+    
+    .single-post__recipe__details__indegradients ul li {
+    	list-style: none;
+    	font-size: 15px;
+    	color: #444444;
+    	line-height: 30px;
+    	position: relative;
+    	padding-left: 20px;
+    }
+    
+    .single-post__recipe__details__indegradients ul li:before {
+    	position: absolute;
+    	left: 0;
+    	top: 13px;
+    	height: 3px;
+    	width: 3px;
+    	background: #111111;
+    	content: "";
+    }
+    
+    .single-post__recipe__details__direction {
+    	padding-left: 30px;
+    	padding-right: 30px;
+    	padding-top: 25px;
+    	padding-bottom: 15px;
+    }
+    
+    .single-post__recipe__details__direction h5 {
+    	font-size: 20px;
+    	color: #111111;
+    	text-transform: uppercase;
+    	margin-bottom: 10px;
+    }
+    
+    .single-post__recipe__details__direction ul li {
+    	list-style: none;
+    	font-size: 15px;
+    	color: #444444;
+    	line-height: 30px;
+    	position: relative;
+    	padding-left: 20px;
+    }
+    
+    .single-post__recipe__details__direction ul li span {
+    	font-size: 15px;
+    	color: #111111;
+    	opacity: 0.7;
+    	position: absolute;
+    	left: 0;
+    	top: 0;
+    }
+    
+    
+    
+    
+    
+    
     .spin{
         width: 2rem;
         height: 2rem;

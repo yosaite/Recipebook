@@ -21,7 +21,7 @@ namespace Recipebook.ViewModel
         [DataType(DataType.Text)]
         public string Directions { get; set; }
         [Required]
-        [StringLength(800, MinimumLength = 20, ErrorMessage = "Opis musi mieć pomiędzy {2} - {1} znaków.")]
+        [StringLength(2000, MinimumLength = 20, ErrorMessage = "Opis musi mieć pomiędzy {2} - {1} znaków.")]
         [DataType(DataType.Text)]
         public string Description { get; set; }
         [Required]
