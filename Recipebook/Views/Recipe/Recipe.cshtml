@@ -159,11 +159,11 @@
                             </div>
                         </div>
                     }
+                </div>
+                <div id="comments-row" class="container" hidden>
                     <div class="row d-flex justify-content-center mt-3">
                         <div class="col-md-12 col-lg-12">
                             <div class="card" id="comment-card">
-
-
                             </div>
                         </div>
                     </div>
@@ -272,8 +272,11 @@
                   RecipeId: @Model.Id, 
                 },
                 success: function(response){
-                         $('#comment-card').empty()
-                         
+                         $('#comment-card').empty()                       
+                         if(!jQuery.isEmptyObject(response)){
+                             console.log(response);
+                             $('#comments-row').attr('hidden',false);
+                         }
                         for(let comment in response){
                             var commentDate = new Date(response[comment]['created']).toUTCString()
                             $('#comment-card').append(
