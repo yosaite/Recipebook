@@ -8,27 +8,54 @@
     {
         <li class="nav-item">
             <div class="dropdown show">
-                <a class="nav-link text-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@User.Identity.Name</a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Informacje o profilu</a>
-                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Email">Email</a>
-                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Bezpieczeństwo</a>
+                <a class="nav-link dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@User.Identity.Name</a>
+                <div class="dropdown-menu menu-cls" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item drop-cls" asp-area="Identity" asp-page="/Account/Manage/Index">Informacje o profilu</a>
+                    <a class="dropdown-item drop-cls" asp-area="Identity" asp-page="/Account/Manage/Email">Email</a>
+                    <a class="dropdown-item drop-cls" asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Bezpieczeństwo</a>
                 </div>
             </div>
         </li>
-        <li class="nav-item">
+        <li class="nav-item item-cls">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new {area = ""})">
-                <button type="submit" class="nav-link btn btn-link text-dark">Wyloguj</button>
+                <button type="submit" class="nav-link btn btn-link link-cls">Wyloguj</button>
             </form>
         </li>
     }
     else
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Rejestracja</a>
+        <li class="nav-item item-cls">
+            <a class="nav-link link-cls" asp-area="Identity" asp-page="/Account/Register">Rejestracja</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Logowanie</a>
+        <li class="nav-item item-cls">
+            <a class="nav-link link-cls" asp-area="Identity" asp-page="/Account/Login">Logowanie</a>
         </li>
     }
 </ul>
+
+@{
+    <style>
+        
+        .link-cls{
+            color: white !important;
+        }
+        .item-cls{
+            border-radius: 5px;
+        }
+        .item-cls:hover{
+            background-color: white !important;
+        }
+        .link-cls:hover{
+            color: black !important;
+        }
+        .drop-cls:hover{
+            color: white !important;
+            background-color: black !important;
+        }
+        .menu-cls{
+            
+        }
+       
+    </style>
+    
+}
