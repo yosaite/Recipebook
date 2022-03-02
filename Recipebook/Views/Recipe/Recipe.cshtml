@@ -22,7 +22,7 @@
                             @foreach (var img in @Model.Images)
                             {
                                 <div class="carousel-item @(first ? Html.Raw("active") : Html.Raw(""))">
-                                    <img class="d-block w-100 rec" src=@($"/images/{@img.Path}") alt="" data-toggle="modal" data-target="#exampleModalCenter" data-image="@img.Path">
+                                    <img class="d-block w-100 rec" src="@img.WebPath" alt="" data-toggle="modal" data-target="#exampleModalCenter" data-image="@img.File">
                                 </div>
                                 first = false;
                             }
@@ -145,7 +145,7 @@
                     @if (User.Identity is {IsAuthenticated: true })
                     {
                         <div class="media mt-3 shadow-textarea">
-                            <img id="user-image" class="d-flex rounded-circle avatar z-depth-1-half mr-3" src="/no-image.png"
+                            <img id="user-image" class="d-flex rounded-circle avatar z-depth-1-half mr-3" src="/no-avatar.png"
                                  alt="Generic placeholder image" width="100px" height="100px">
                             <div class="media-body">
                                 <h5 class="mt-0 font-weight-bold blue-text">@User.Identity.Name</h5>
@@ -272,7 +272,7 @@
                   RecipeId: @Model.Id, 
                 },
                 success: function(response){
-                         $('#comment-card').empty()                       
+                         $('#comment-card').empty()                        
                          if(!jQuery.isEmptyObject(response)){
                              console.log(response);
                              $('#comments-row').attr('hidden',false);
@@ -285,7 +285,7 @@
                                 <div class="d-flex flex-start">
                                     <img
                                         class="rounded-circle shadow-1-strong mr-3"
-                                        src="/${response[comment]['avatar']}"
+                                        src="${response[comment]['avatar']}"
                                         alt="avatar"
                                         width="40"
                                         height="40"/>
@@ -312,7 +312,7 @@
                 url: '/user/getAvatar',
                 type: 'GET',
                 success: function(response){
-                         $('#user-image').prop('src',`/${response}`)
+                         $('#user-image').prop('src',`${response}`)
                     },
                 error: function(){
                        

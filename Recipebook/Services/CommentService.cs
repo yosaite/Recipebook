@@ -47,7 +47,7 @@ namespace Recipebook.Services
                     Content = n.Content,
                     UserName = n.User.UserName,
                     Created = n.Created,
-                    Avatar = n.User.Image.Path ?? "no-image.png"
+                    Avatar = n.User.Image.WebPath ?? "/no-avatar.png"
                 }).OrderByDescending(z=>z.Created).ToListAsync();
         }
     }

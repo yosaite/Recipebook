@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 
 namespace Recipebook.Models
 {
@@ -8,8 +9,11 @@ namespace Recipebook.Models
     {
         [Key]
         public ulong Id { get; set; }
-        public string Path { get; set; }
+        public string File { get; set; }
         [ForeignKey("Recipe")]
         public ulong? RecipeId { get; set; }
+        
+        [NotMapped]
+        public string WebPath => $"/{Setup.ImagesFolder}/{File}";
     }
 }

@@ -17,8 +17,10 @@ namespace Recipebook
         HighestRate = 2,
         LowestRate = 3
     }
-    public static class Extensions
+
+    public static class Setup
     {
+        public const string ImagesFolder = "images";
         public const int Limit = 3;
         public static void RunAppSetup(this IServiceCollection services)
         {

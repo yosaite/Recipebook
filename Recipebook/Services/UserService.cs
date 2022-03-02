@@ -20,9 +20,24 @@ namespace Recipebook.Services
         {
             var avatar = await _dbContext.Users.Include(z => z.Image).Where(u => u.Id == user.Id).Select(z => z.Image)
                 .FirstOrDefaultAsync();
-            return avatar != null ? avatar.Path : "no-image.png";
+            return avatar != null ? avatar.WebPath : "/no-avatar.png";
+        }
+        public async Task<Image> GetAvatarImage(User user)
+        {
+            return await _dbContext.Users.Include(z => z.Image).Where(u => u.Id == user.Id).Select(z => z.Image)
+                .FirstOrDefaultAsync();
         }
 
+        public async Task<bool> SetAvatar(User user, Image image)
+        {
+            var dbUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+            if (dbUser == null) return false;
+            dbUser.Image = image;
+            _dbContext.Update(user);
+            await _dbContext.SaveChangesAsync();
+            return true;
+
+        }
         public async Task<bool> Favorite(string userId, ulong recipeId)
         {
             var dbFavorite = await _dbContext.Favorites.Where(c => c.UserId == userId && c.RecipeId == recipeId)

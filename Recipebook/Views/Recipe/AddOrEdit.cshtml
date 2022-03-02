@@ -83,7 +83,7 @@ else
                                     <div class="col-md-4 d-flex" id="image-@i">
                                         <div class="card mb-4 box-shadow flex-fill" style="width: 18rem;">
                                             <input type="hidden" class="form-control" name="Images[@i].Id" value="@Model.Images[i].Id"/>
-                                            <img class="card-img" src=@($"/images/{@Model.Images[i].Path}") alt="">
+                                            <img class="card-img" src=@($"/images/{@Model.Images[i].File}") alt="">
                                             <div class="card-img-overlay ali">
                                                 <button class="btn btn-danger" onclick="RemoveImage(@i)">Delete</button>
                                             </div>

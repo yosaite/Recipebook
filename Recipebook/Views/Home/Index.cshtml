@@ -118,7 +118,7 @@ else
                     <div class="card pop mb-4 box-shadow flex-fill">
                         @if (@item.Images != null && @item.Images.Count != 0)
                         {
-                            <img class="card-img-top" alt="Card image cap" src=@($"/images/{@item.Images.First().Path}")>
+                            <img class="card-img-top" alt="Card image cap" src=@item.Images.First().WebPath>
                         }
                         else
                         {
@@ -154,7 +154,7 @@ else
     <ul class="pagination">
         @if (ViewBag.User == null && ViewBag.UserFavorite == null)
         {
-            int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ViewBag.RecipesCount / Convert.ToDouble(Extensions.Limit))));
+            int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ViewBag.RecipesCount / Convert.ToDouble(Setup.Limit))));
             <li class="@(ViewBag.Page == 1 ? "page-item disabled" : "page-item")">
                 <a class="page-link" asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId" asp-route-page="@(@ViewBag.Page - 1)" asp-route-sort="@ViewBag.Sort">Poprzednia</a>
             </li>
@@ -170,7 +170,7 @@ else
         }
         else if(ViewBag.UserFavorite != null)
         {
-            int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ViewBag.RecipesCount / Convert.ToDouble(Extensions.Limit))));
+            int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ViewBag.RecipesCount / Convert.ToDouble(Setup.Limit))));
             <li class="@(ViewBag.Page == 1 ? "page-item disabled" : "page-item")">
                 <a class="page-link" asp-action="IndexUserFavorite" asp-route-categoryId="@ViewBag.CategoryId" asp-route-page="@(@ViewBag.Page - 1)" asp-route-sort="@ViewBag.Sort">Poprzednia</a>
             </li>
@@ -185,7 +185,7 @@ else
             </li>
         }
         else{
-                int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ViewBag.RecipesCount / Convert.ToDouble(Extensions.Limit))));
+                int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ViewBag.RecipesCount / Convert.ToDouble(Setup.Limit))));
                 <li class="@(ViewBag.Page == 1 ? "page-item disabled" : "page-item")">
                     <a class="page-link" asp-action="IndexUser" asp-route-categoryId="@ViewBag.CategoryId" asp-route-page="@(@ViewBag.Page - 1)" asp-route-sort="@ViewBag.Sort">Poprzednia</a>
                 </li>

@@ -27,8 +27,8 @@ namespace Recipebook.Controllers
         {
             var user = await _userManager.GetUserAsync(HttpContext.User);
             if (user == null) return NotFound();
-            
-            return Json(await _userService.GetAvatar(user));
+            var avatarPath = await _userService.GetAvatar(user);
+            return Json(avatarPath);
         }
 
         [HttpPost]

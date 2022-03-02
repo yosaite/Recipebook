@@ -1,13 +1,22 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using Recipebook.Interfaces
 @using Recipebook.Models
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
-
+@inject IUserService _userService
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <div class="dropdown show">
+            
+            <div class="dropdown show d-flex align-items-center">
+                <img
+                    class="rounded-circle shadow-1-strong"
+                    src="@(await _userService.GetAvatar(await UserManager.GetUserAsync(User)))"
+                    alt="avatar"
+                    width="30"
+                    height="30"
+                    style="border: solid; border-color: white; border-width: 1px"/>
                 <a class="nav-link dropdown-toggle text-white" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@User.Identity.Name</a>
                 <div class="dropdown-menu menu-cls" aria-labelledby="dropdownMenuLink">
                     <a class="dropdown-item drop-cls" asp-area="Identity" asp-page="/Account/Manage/Index">Informacje o profilu</a>

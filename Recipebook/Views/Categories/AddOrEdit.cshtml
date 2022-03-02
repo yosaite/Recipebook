@@ -25,7 +25,7 @@
                                 <div class="col-md-12 d-flex" id="image">
                                     <div class="card mb-12 box-shadow flex-fill" style="width: 18rem;">
                                         <input type="hidden" class="form-control" name="Image.Id" value="@Model.Image.Id"/>
-                                        <img class="card-img" src=@($"/images/{@Model.Image.Path}") alt="">
+                                        <img class="card-img" src=@($"/images/{@Model.Image.File}") alt="">
                                         <div class="card-img-overlay ali">
                                             <button class="btn btn-danger" onclick="RemoveImage()">Delete</button>
                                         </div>

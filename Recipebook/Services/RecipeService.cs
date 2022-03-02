@@ -73,7 +73,7 @@ namespace Recipebook.Services
         {
             if (page == 0)
                 page = 1;
-            var skip = (page - 1) * Extensions.Limit;
+            var skip = (page - 1) * Setup.Limit;
 
             var recipes = _dbContext.Recipes.Include(m => m.Images)
                 .Include(m => m.User)
@@ -98,7 +98,7 @@ namespace Recipebook.Services
                 _ => recipes
             };
 
-            return await recipes.Skip(skip).Take(Extensions.Limit).ToListAsync();
+            return await recipes.Skip(skip).Take(Setup.Limit).ToListAsync();
         }
 
         public async Task<int> GetRecipesVMCount() => await _dbContext.Recipes.CountAsync();
@@ -112,7 +112,7 @@ namespace Recipebook.Services
 
             if (page == 0)
                 page = 1;
-            var skip = (page - 1) * Extensions.Limit;
+            var skip = (page - 1) * Setup.Limit;
             
             var recipes = _dbContext.Categories.Where(z=>z.Id == categoryId)
                 .SelectMany(c => c.Recipes).Include(d=>d.Images)
@@ -135,7 +135,7 @@ namespace Recipebook.Services
                 RecipeSort.LowestRate => recipes.OrderBy(z => z.Rate),
                 _ => recipes
             };
-            return await recipes.Skip(skip).Take(Extensions.Limit).ToListAsync();
+            return await recipes.Skip(skip).Take(Setup.Limit).ToListAsync();
         }
 
         public async Task<int> GetRecipesVMCount(ulong categoryId) => await _dbContext.Categories
@@ -153,7 +153,7 @@ namespace Recipebook.Services
             }
             if (page == 0)
                 page = 1;
-            var skip = (page - 1) * Extensions.Limit;
+            var skip = (page - 1) * Setup.Limit;
             var recipes = _dbContext.Recipes.Include(m => m.Images)
                 .Include(m => m.User)
                 .Where(c => c.UserId == userId)
@@ -177,7 +177,7 @@ namespace Recipebook.Services
                 RecipeSort.LowestRate => recipes.OrderBy(z => z.Rate),
                 _ => recipes
             };
-            return await recipes.Skip(skip).Take(Extensions.Limit).ToListAsync();
+            return await recipes.Skip(skip).Take(Setup.Limit).ToListAsync();
         }
 
         public async Task<int> GetRecipesVMCount(string userId) => await _dbContext.Recipes
@@ -192,7 +192,7 @@ namespace Recipebook.Services
             }
             if (page == 0)
                 page = 1;
-            var skip = (page - 1) * Extensions.Limit;
+            var skip = (page - 1) * Setup.Limit;
             var recipes = _dbContext.Favorites.Where(z=>z.UserId == userId)
                 .Include(m=>m.Recipe)
                 .Include(i=>i.Recipe.Images)
@@ -217,7 +217,7 @@ namespace Recipebook.Services
                 RecipeSort.LowestRate => recipes.OrderBy(z => z.Rate),
                 _ => recipes
             };
-            return await recipes.Skip(skip).Take(Extensions.Limit).ToListAsync();
+            return await recipes.Skip(skip).Take(Setup.Limit).ToListAsync();
         }
 
         public async Task<int> GetFavoriteRecipesVMCount(string userId) => await _dbContext.Favorites

@@ -25,13 +25,13 @@ namespace Recipebook.Services
         public async Task<List<Image>> SaveImages(IEnumerable<IFormFile> formFiles)
         {
             if (formFiles == null) return new List<Image>();
-            var path = Path.Combine(_environment.WebRootPath, "images");
+            var path = Path.Combine(_environment.WebRootPath, Setup.ImagesFolder);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             var images = new List<Image>();
             foreach (var file in formFiles.Where(img=>img.Length > 0))
             {
-                var img = new Image(){Path = $"{Guid.NewGuid()}.{file.FileName.Split('.').Last()}"};
-                await using (var stream = File.Create(Path.Combine(path,img.Path)))
+                var img = new Image(){File = $"{Guid.NewGuid()}.{file.FileName.Split('.').Last()}"};
+                await using (var stream = File.Create(Path.Combine(path,img.File)))
                 {
                     await file.CopyToAsync(stream);
                 }
@@ -43,10 +43,10 @@ namespace Recipebook.Services
         public async Task<Image> SaveImage(IFormFile formFile)
         {
             if (formFile == null) return new Image();
-            var path = Path.Combine(_environment.WebRootPath, "images");
+            var path = Path.Combine(_environment.WebRootPath, Setup.ImagesFolder);
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            var img = new Image(){Path = $"{Guid.NewGuid()}.{formFile.FileName.Split('.').Last()}"};
-            await using (var stream = File.Create(Path.Combine(path, img.Path)))
+            var img = new Image(){File = $"{Guid.NewGuid()}.{formFile.FileName.Split('.').Last()}"};
+            await using (var stream = File.Create(Path.Combine(path, img.File)))
             {
                 await formFile.CopyToAsync(stream);
             }
