@@ -11,8 +11,8 @@ else
 }
 
 <!-- Main banner -->
-<div class="card bg-dark flex-fill text-center">
-    <img class="card-img" src="https://www.fitagain.pl/wp-content/uploads/2019/09/IMG_88612str.jpg" alt="...">
+<div class="card bg-dark flex-fill text-center" style="border-radius: 25px;">
+    <img class="card-img" src="https://www.fitagain.pl/wp-content/uploads/2019/09/IMG_88612str.jpg" alt="..." style="border-radius: 25px;">
     <div class="card-img-overlay">
         <h1 class="display-3 font-weight-bold pt-4 mt-2 text-white text-border">Recipebook</h1>
         <div class="divider d-flex align-items-center pb-4 mx-5 text-border">
@@ -20,6 +20,7 @@ else
         </div>
     </div>
 </div>
+
 
 <!-- Main body -->
 <div class="album py-4" style="border-radius: 25px">
@@ -31,37 +32,7 @@ else
         {
             <hr/>
         }
-        
-        <!-- FAB button -->
-        <div class="row">
-            @if (this.User.IsInRole("Admin") && ViewBag.CategoryId != 0 && ViewBag.User == null && ViewBag.UserFavorite == null)
-            {
-                <div class="btn-group-fab" role="group" aria-label="FAB Menu">
-                    <div>
-                        <button type="button" class="btn btn-main btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Menu">
-                            <i class="fa fa-bars"></i>
-                        </button>
-                        <a asp-controller="Categories" asp-action="Delete" asp-route-categoryId="@ViewBag.CategoryId" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Usuń kategorie">
-                            <i class="fa-solid fa-xmark"></i>
-                        </a>
-                        <a asp-controller="Categories" asp-action="Edit" asp-route-categoryId="@ViewBag.CategoryId" type="button" class="btn btn-sub btn-info has-tooltip" data-toggle="tooltip" data-placement="left" title="Edytuj kategorie">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </a>
-                    </div>
-                </div>
-            }
-            else if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                <a asp-controller="Recipe" asp-action="Add" class="btn-group-fab" role="group" aria-label="FAB Menu">
-                    <div>
-                        <button type="button" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="left" title="Dodaj przepis">
-                            <i class="fa-solid fa-plus fa-2xl"></i>
-                        </button>
-                    </div>
-                </a>
-            }
-        </div>
-        
+
         <!-- Sort button -->
         <div class="row d-flex justify-content-end mb-3 mr-1">
             <div class="dropdown">
@@ -111,7 +82,7 @@ else
                 </div>
             </div>
         </div>
-        
+
         <!-- Recipe card -->
         <div class="row">
             @foreach (var item in Model)
@@ -206,6 +177,36 @@ else
     </ul>
 </nav>
 
+<!-- FAB button -->
+<div class="row">
+    @if (this.User.IsInRole("Admin") && ViewBag.CategoryId != 0 && ViewBag.User == null && ViewBag.UserFavorite == null)
+    {
+        <div class="btn-group-fab button-position" role="group" aria-label="FAB Menu">
+            <div>
+                <button type="button" class="btn btn-main btn-primary has-tooltip" data-toggle="tooltip" data-placement="left" title="Menu">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a asp-controller="Categories" asp-action="Delete" asp-route-categoryId="@ViewBag.CategoryId" type="button" class="btn btn-sub btn-danger has-tooltip" data-toggle="tooltip" data-placement="left" title="Usuń kategorie">
+                    <i class="fa-solid fa-xmark"></i>
+                </a>
+                <a asp-controller="Categories" asp-action="Edit" asp-route-categoryId="@ViewBag.CategoryId" type="button" class="btn btn-sub btn-info has-tooltip" data-toggle="tooltip" data-placement="left" title="Edytuj kategorie">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+            </div>
+        </div>
+    }
+    else if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <a asp-controller="Recipe" asp-action="Add" class="btn-group-fab" role="group" aria-label="FAB Menu">
+            <div>
+                <button type="button" class="btn btn-main btn-success has-tooltip" data-toggle="tooltip" data-placement="left" title="Dodaj przepis">
+                    <i class="fa-solid fa-plus fa-2xl"></i>
+                </button>
+            </div>
+        </a>
+    }
+</div>
+
 @section Scripts
 {
     <script>
@@ -223,6 +224,7 @@ else
         width: 100%;
         object-fit: cover;
         opacity: 0.5;
+        overflow: hidden;
     }
     .card-img-top {
         height: 225px;
