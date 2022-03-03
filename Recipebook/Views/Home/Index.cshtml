@@ -10,20 +10,18 @@ else
     ViewData["Title"] = "Strona domowa";
 }
 
-<div class="text-center">
-    <div class="card mb-4 box-shadow bg-white" style="border-radius: 25px">
-        <img class="pt-3 pb-3 mx-auto d-block" src="https://1.bp.blogspot.com/-h89dDVX-2P4/WrEDtOjxF1I/AAAAAAAAEFQ/5BWT4UrZlUsOQsyVGmsPMT-cPJkNOL8ewCK4BGAYYCw/s1600/Dapper.jpg"/>
-        @* <h1 class="display-4">Witejcie</h1> <br/> *@
-        @* <p>Tukej bydzie kejś fajnŏ ksiōnżka z receptami.</p> *@
-        @* <p>Może niy lepszŏ ale jako tako.</p> *@
+<!-- Main banner -->
+<div class="card bg-dark flex-fill text-center">
+    <img class="card-img" src="https://www.fitagain.pl/wp-content/uploads/2019/09/IMG_88612str.jpg" alt="...">
+    <div class="card-img-overlay">
+        <h1 class="display-3 font-weight-bold pt-4 mt-2 text-white text-border">Recipebook</h1>
+        <div class="divider d-flex align-items-center pb-4 mx-5 text-border">
+            <h5 class="font-weight-bold mx-3 mb-0 text-white">Dziel się pomysłami z innymi</h5>
+        </div>
     </div>
 </div>
 
-
-@* <div class="border-top border-bottom border-dark"> *@
-@*     <img class="pt-3 pb-3 mx-auto d-block" src="https://1.bp.blogspot.com/-h89dDVX-2P4/WrEDtOjxF1I/AAAAAAAAEFQ/5BWT4UrZlUsOQsyVGmsPMT-cPJkNOL8ewCK4BGAYYCw/s1600/Dapper.jpg"/> *@
-@* </div> *@
-
+<!-- Main body -->
 <div class="album py-4" style="border-radius: 25px">
     <div class="container">
         <div class="cent">
@@ -33,6 +31,8 @@ else
         {
             <hr/>
         }
+        
+        <!-- FAB button -->
         <div class="row">
             @if (this.User.IsInRole("Admin") && ViewBag.CategoryId != 0 && ViewBag.User == null && ViewBag.UserFavorite == null)
             {
@@ -61,7 +61,8 @@ else
                 </a>
             }
         </div>
-
+        
+        <!-- Sort button -->
         <div class="row d-flex justify-content-end mb-3 mr-1">
             <div class="dropdown">
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -88,29 +89,30 @@ else
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     @if (ViewBag.User == null && ViewBag.UserFavorite == null)
                     {
-                        <a class="dropdown-item" asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-categoryId="@ViewBag.CategoryId" asp-route-sort="@RecipeSort.Newest" >Najnowsze</a>
-                        <a class="dropdown-item" asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-categoryId="@ViewBag.CategoryId" asp-route-sort="@RecipeSort.Oldest" >Najstarsze</a>
-                        <a class="dropdown-item" asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-categoryId="@ViewBag.CategoryId" asp-route-sort="@RecipeSort.HighestRate" >Najwyżej oceniane</a>
-                        <a class="dropdown-item" asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-categoryId="@ViewBag.CategoryId" asp-route-sort="@RecipeSort.LowestRate" >Najniżej oceniane</a>
+                        <a class="dropdown-item" asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-categoryId="@ViewBag.CategoryId" asp-route-sort="@RecipeSort.Newest">Najnowsze</a>
+                        <a class="dropdown-item" asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-categoryId="@ViewBag.CategoryId" asp-route-sort="@RecipeSort.Oldest">Najstarsze</a>
+                        <a class="dropdown-item" asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-categoryId="@ViewBag.CategoryId" asp-route-sort="@RecipeSort.HighestRate">Najwyżej oceniane</a>
+                        <a class="dropdown-item" asp-action="Index" asp-route-page="@ViewBag.Page" asp-route-categoryId="@ViewBag.CategoryId" asp-route-sort="@RecipeSort.LowestRate">Najniżej oceniane</a>
                     }
-                    else if(ViewBag.UserFavorite != null)
+                    else if (ViewBag.UserFavorite != null)
                     {
-                        <a class="dropdown-item" asp-action="IndexUserFavorite" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.Newest" >Najnowsze</a>
-                        <a class="dropdown-item" asp-action="IndexUserFavorite" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.Oldest" >Najstarsze</a>
-                        <a class="dropdown-item" asp-action="IndexUserFavorite" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.HighestRate" >Najwyżej oceniane</a>
-                        <a class="dropdown-item" asp-action="IndexUserFavorite" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.LowestRate" >Najniżej oceniane</a>
+                        <a class="dropdown-item" asp-action="IndexUserFavorite" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.Newest">Najnowsze</a>
+                        <a class="dropdown-item" asp-action="IndexUserFavorite" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.Oldest">Najstarsze</a>
+                        <a class="dropdown-item" asp-action="IndexUserFavorite" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.HighestRate">Najwyżej oceniane</a>
+                        <a class="dropdown-item" asp-action="IndexUserFavorite" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.LowestRate">Najniżej oceniane</a>
                     }
                     else
                     {
-                        <a class="dropdown-item" asp-action="IndexUser" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.Newest" >Najnowsze</a>
-                        <a class="dropdown-item" asp-action="IndexUser" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.Oldest" >Najstarsze</a>
-                        <a class="dropdown-item" asp-action="IndexUser" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.HighestRate" >Najwyżej oceniane</a>
-                        <a class="dropdown-item" asp-action="IndexUser" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.LowestRate" >Najniżej oceniane</a>
+                        <a class="dropdown-item" asp-action="IndexUser" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.Newest">Najnowsze</a>
+                        <a class="dropdown-item" asp-action="IndexUser" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.Oldest">Najstarsze</a>
+                        <a class="dropdown-item" asp-action="IndexUser" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.HighestRate">Najwyżej oceniane</a>
+                        <a class="dropdown-item" asp-action="IndexUser" asp-route-page="@ViewBag.Page" asp-route-sort="@RecipeSort.LowestRate">Najniżej oceniane</a>
                     }
                 </div>
             </div>
         </div>
-
+        
+        <!-- Recipe card -->
         <div class="row">
             @foreach (var item in Model)
             {
@@ -125,7 +127,7 @@ else
                             <img class="card-img-top" alt="Card image cap" src="/no-image.png">
                         }
                         <div class="card-body">
-                            <h5 class="card-title">
+                            <h5 class="card-title font-weight-bold">
                                 <a asp-controller="Recipe" asp-action="Recipe" asp-route-recipeId="@item.Id" class="des stretched-link">@item.Name</a>
                             </h5>
                             @if (@item.Description.Length > 100)
@@ -150,6 +152,7 @@ else
     </div>
 </div>
 
+<!-- Pagination -->
 <nav class="d-flex justify-content-center" aria-label="Page navigation">
     <ul class="pagination">
         @if (ViewBag.User == null && ViewBag.UserFavorite == null)
@@ -168,7 +171,7 @@ else
                 <a class="page-link" asp-action="Index" asp-route-categoryId="@ViewBag.CategoryId" asp-route-page="@(@ViewBag.Page + 1)" asp-route-sort="@ViewBag.Sort">Następna</a>
             </li>
         }
-        else if(ViewBag.UserFavorite != null)
+        else if (ViewBag.UserFavorite != null)
         {
             int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ViewBag.RecipesCount / Convert.ToDouble(Setup.Limit))));
             <li class="@(ViewBag.Page == 1 ? "page-item disabled" : "page-item")">
@@ -184,20 +187,21 @@ else
                 <a class="page-link" asp-action="IndexUserFavorite" asp-route-categoryId="@ViewBag.CategoryId" asp-route-page="@(@ViewBag.Page + 1)" asp-route-sort="@ViewBag.Sort">Następna</a>
             </li>
         }
-        else{
-                int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ViewBag.RecipesCount / Convert.ToDouble(Setup.Limit))));
-                <li class="@(ViewBag.Page == 1 ? "page-item disabled" : "page-item")">
-                    <a class="page-link" asp-action="IndexUser" asp-route-categoryId="@ViewBag.CategoryId" asp-route-page="@(@ViewBag.Page - 1)" asp-route-sort="@ViewBag.Sort">Poprzednia</a>
+        else
+        {
+            int numberOfPages = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(ViewBag.RecipesCount / Convert.ToDouble(Setup.Limit))));
+            <li class="@(ViewBag.Page == 1 ? "page-item disabled" : "page-item")">
+                <a class="page-link" asp-action="IndexUser" asp-route-categoryId="@ViewBag.CategoryId" asp-route-page="@(@ViewBag.Page - 1)" asp-route-sort="@ViewBag.Sort">Poprzednia</a>
+            </li>
+            for (var pages = 1; pages <= numberOfPages; pages++)
+            {
+                <li class="@(pages == ViewBag.Page ? "page-item active" : "page-item")">
+                    <a class="page-link" asp-action="IndexUser" asp-route-page="@pages" asp-route-sort="@ViewBag.Sort">@pages</a>
                 </li>
-                for (var pages = 1; pages <= numberOfPages; pages++)
-                {
-                    <li class="@(pages == ViewBag.Page ? "page-item active" : "page-item")">
-                        <a class="page-link" asp-action="IndexUser" asp-route-page="@pages" asp-route-sort="@ViewBag.Sort">@pages</a>
-                    </li>
-                }
-                <li class="@(ViewBag.Page == numberOfPages ? "page-item disabled" : "page-item")">
-                    <a class="page-link" asp-action="IndexUser" asp-route-categoryId="@ViewBag.CategoryId" asp-route-page="@(@ViewBag.Page + 1)" asp-route-sort="@ViewBag.Sort">Następna</a>
-                </li>
+            }
+            <li class="@(ViewBag.Page == numberOfPages ? "page-item disabled" : "page-item")">
+                <a class="page-link" asp-action="IndexUser" asp-route-categoryId="@ViewBag.CategoryId" asp-route-page="@(@ViewBag.Page + 1)" asp-route-sort="@ViewBag.Sort">Następna</a>
+            </li>
         }
     </ul>
 </nav>
@@ -213,6 +217,13 @@ else
 
 @section Styles{
     <style>
+    
+    .card-img {
+        height: 225px;
+        width: 100%;
+        object-fit: cover;
+        opacity: 0.5;
+    }
     .card-img-top {
         height: 225px;
         width: 100%;
@@ -292,6 +303,9 @@ else
     }
     .page-link:hover{
         color: black;
+    }
+    .text-border{
+        text-shadow: 1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000, 1px 1px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
     }
     
 </style>
