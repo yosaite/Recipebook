@@ -317,5 +317,40 @@ namespace Recipebook.Services
             return Math.Round(Convert.ToDouble(await _dbContext.Rates.Where(r => r.RecipeId == recipeId)
                 .AverageAsync(z => z.Value)),1);
         }
+        
+        
+        public async Task<List<RecipeVM>> SearchRecipesVM(string searchString = "", int page = 0, RecipeSort sort = RecipeSort.Newest)
+        {
+            if (page == 0)
+                page = 1;
+            var skip = (page - 1) * Setup.Limit;
+
+            var recipes = _dbContext.Recipes.Include(m => m.Images)
+                .Include(m => m.User)
+                .Where(m=> m.Name.Contains(searchString) || m.Description.Contains(searchString))
+                .Select(n => new RecipeVM()
+                {
+                    Id = n.Id,
+                    Name = n.Name,
+                    Description = n.Description,
+                    Images = n.Images,
+                    Created = n.Created,
+                    Rate = n.Rates.Count == 0
+                        ? 0
+                        : Math.Round(Convert.ToDouble(n.Rates.Sum(t => t.Value)) / Convert.ToDouble(n.Rates.Count), 1)
+                });
+            recipes = sort switch
+            {
+                RecipeSort.Newest => recipes.OrderByDescending(z => z.Created),
+                RecipeSort.Oldest => recipes.OrderBy(z => z.Created),
+                RecipeSort.HighestRate => recipes.OrderByDescending(z => z.Rate),
+                RecipeSort.LowestRate => recipes.OrderBy(z => z.Rate),
+                _ => recipes
+            };
+
+            return await recipes.Skip(skip).Take(Setup.Limit).ToListAsync();
+        }
+
+        public async Task<int> SearchRecipesVMCount(string searchString = "") => await _dbContext.Recipes.Where(m=> m.Name.Contains(searchString) || m.Description.Contains(searchString)).CountAsync();
     }
 }

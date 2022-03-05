@@ -83,6 +83,19 @@ namespace Recipebook.Controllers
             return View("Index", recipes);
         }
         
+        [HttpGet]
+        [Authorize(Roles="User, Admin")]
+        public async Task<IActionResult> IndexSearch(string search, int page = 1, RecipeSort sort = RecipeSort.Newest)
+        {
+            var recipes = await _recipeService.SearchRecipesVM(search, page, sort);
+            ViewBag.RecipesCount = await _recipeService.SearchRecipesVMCount(search);
+            ViewBag.ListTitle = $"Wyniki wyszukiwania: {search}";
+            ViewBag.Search = search;
+            ViewBag.Page = page;
+            ViewBag.Sort = sort;
+            return View("Index", recipes);
+        }
+        
         public IActionResult Privacy()
         {
             return View();
