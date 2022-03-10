@@ -11,17 +11,17 @@ namespace Recipebook.ViewModel
     {
         public ulong Id { get; set; }
         [Required]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Nazwa musi mieć pomiędzy {2} - {1} znaków.")]
+        [StringLength(200, MinimumLength = 6, ErrorMessage = "Nazwa musi mieć pomiędzy {2} - {1} znaków.")]
         [DataType(DataType.Text)]
         public string Name { get; set; }
         [Required]
         public List<string> Ingredients { get; set; }
         [Required]
-        [StringLength(2000, MinimumLength = 20, ErrorMessage = "Sposób przygotowania musi mieć pomiędzy {2} - {1} znaków.")]
+        [StringLength(8000, MinimumLength = 20, ErrorMessage = "Sposób przygotowania musi mieć pomiędzy {2} - {1} znaków.")]
         [DataType(DataType.Text)]
         public string Directions { get; set; }
         [Required]
-        [StringLength(2000, MinimumLength = 20, ErrorMessage = "Opis musi mieć pomiędzy {2} - {1} znaków.")]
+        [StringLength(8000, MinimumLength = 20, ErrorMessage = "Opis musi mieć pomiędzy {2} - {1} znaków.")]
         [DataType(DataType.Text)]
         public string Description { get; set; }
         [Required]

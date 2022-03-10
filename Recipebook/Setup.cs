@@ -21,7 +21,7 @@ namespace Recipebook
     public static class Setup
     {
         public const string ImagesFolder = "images";
-        public const int Limit = 3;
+        public const int Limit = 15;
         public static void RunAppSetup(this IServiceCollection services)
         {
             CreateRoles(services);

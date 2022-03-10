@@ -72,6 +72,12 @@ namespace Recipebook.Controllers
         {
             var recipe = await _recipeService.GetRecipe(recipeId);
             var recipeVm = _mapper.Map<AddRecipeVM>(recipe);
+            var userId = _userManager.GetUserId(HttpContext.User);
+            
+            if (!User.IsInRole("Admin") && userId != recipe.UserId)
+            {
+                return Forbid();
+            }
             
             recipeVm.SelectedCategoriesIds = recipe.Categories.Select(m => m.Id).ToList();
             recipeVm.CategoriesList = _categoryService.GetCategories().Select(i => new SelectListItem()

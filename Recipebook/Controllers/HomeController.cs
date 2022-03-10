@@ -30,7 +30,6 @@ namespace Recipebook.Controllers
             _categoryService = categoryService;
         }
         
-       
         [HttpGet]
         public async Task<IActionResult> Index(ulong categoryId = 0, int page = 1, RecipeSort sort = RecipeSort.Newest)
         {

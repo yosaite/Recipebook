@@ -97,7 +97,7 @@
                             </li>
                             <li>
                                 <h5><i class="fa-solid fa-clock"></i> Czas przyg.</h5>
-                                <span>@Model.PreparationTime minute</span>
+                                <span>@Model.PreparationTime minut</span>
                             </li>
                             <li>
                                 <h5><i class="fa-solid fa-book"></i> Kategorie</h5>
@@ -132,7 +132,8 @@
                             @foreach (var (item,index) in Model.Directions.Split("\r\n\r\n").Select((value, i) => (value, i)))
                             {
                                 <li>
-                                    <span>@(index + 1).</span> @item
+                                    <span>@(index + 1).</span>
+                                    <div class="ml-2">@item</div>
                                 </li>
                             }
                         </ul>
@@ -190,7 +191,7 @@
 </div>
 
 <!-- FAB button -->
-@if (User.Identity is {IsAuthenticated: true })
+@if (User.Identity is {IsAuthenticated: true } && (User.Identity.Name == Model.User!.UserName || User.IsInRole("Admin")))
 {
     <div class="btn-group-fab" role="group" aria-label="FAB Menu">
         <div>
