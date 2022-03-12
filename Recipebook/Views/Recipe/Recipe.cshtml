@@ -145,7 +145,7 @@
                     @if (User.Identity is {IsAuthenticated: true })
                     {
                         <div class="media mt-3 shadow-textarea">
-                            <img id="user-image" class="d-flex rounded-circle avatar z-depth-1-half mr-3" src="/no-avatar.png"
+                            <img id="user-image-comment" class="d-flex rounded-circle avatar z-depth-1-half mr-3 user-avatar" src="/no-avatar.png"
                                  alt="Generic placeholder image" width="100px" height="100px">
                             <div class="media-body">
                                 <h5 class="mt-0 font-weight-bold blue-text">@User.Identity.Name</h5>
@@ -285,8 +285,7 @@
                                 ${ (comment==0) ?'<h4 class="mb-4 pb-2">Ostatnie komentarze</h4>':''}
                                 <div class="d-flex flex-start avatar">
                                     <img
-                                        id="user-image"
-                                        class="rounded-circle shadow-1-strong mr-3"
+                                        class="rounded-circle shadow-1-strong mr-3 user-avatar"
                                         src="${response[comment]['avatar']}"
                                         alt="avatar"
                                         width="40"
@@ -309,23 +308,10 @@
             });
         }
         
-        function getUserAvatar(){
-            $.ajax({
-                url: '/user/getAvatar',
-                type: 'GET',
-                success: function(response){
-                            console.log(response)
-                         $('#user-image').prop('src',`${response}`)
-                    },
-                error: function(){
-                       
-                    }
-            });
-        }
-        
         $( document ).ready(function() {
             getComments();
-            getUserAvatar();
+            $('#user-image-comment').prop('src',$('#user-image').prop('src'))
+            $('#rate-id').rating('update', @Model.UserRate);
         });
         
     </script>
@@ -333,7 +319,7 @@
 
 @section Styles{
     <style>
-    #user-image{
+    .user-avatar{
         object-fit: cover;
     }
     .single-post__top__text,
@@ -543,6 +529,11 @@
     }
     .btn-group-fab .btn-sub:nth-child(5) {
       bottom: 210px;
+    }
+    
+    .custom-control-input:checked~.custom-control-label::before{
+        border-color: #000000;
+        background-color: #000000;
     }
     
 </style>
