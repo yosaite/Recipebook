@@ -22,6 +22,7 @@
         <li class="nav-item">
             <div class="dropdown show d-flex align-items-center">
                 <img
+                    id="user-image"
                     class="rounded-circle shadow-1-strong"
                     src="@(await _userService.GetAvatar(await UserManager.GetUserAsync(User)))"
                     alt="avatar"
@@ -56,6 +57,9 @@
 @{
     <style>
         
+        #user-image{
+            object-fit: cover;
+        }
         .link-cls{
             color: white !important;
         }

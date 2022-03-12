@@ -38,7 +38,7 @@ else
                                     Kategoria
                                     <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Można dodać więcej niż 1 kategorię"></i>
                                 </label>
-                                <select multiple id="categories-select" asp-for="SelectedCategoriesIds" class="form-control" asp-items=@Model.CategoriesList></select>
+                                <select multiple id="categories-select" asp-for="SelectedCategoriesIds" class="form-control" asp-items=@Model.CategoriesList required></select>
                                 <span asp-validation-for="SelectedCategoriesIds" class="text-danger"></span>
                             </div>
                         </div>
@@ -55,7 +55,7 @@ else
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="description">Opis przepisu</label>
-                                <textarea id="description" class="form-control" aria-label="With textarea" asp-for="Description" rows="10"></textarea>
+                                <textarea id="description" class="form-control" aria-label="With textarea" asp-for="Description" rows="10" required></textarea>
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                             <div class="col-md-12 mb-3">
@@ -63,7 +63,7 @@ else
                                     Składniki
                                     <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Aby dodać pojedynczy składnik po jego wpisaniu należy wcisąć klawisz Enter"></i>
                                 </label>
-                                <select multiple id="tags-input" type="text" asp-for="Ingredients" class="form-control"></select>
+                                <select multiple id="tags-input" type="text" asp-for="Ingredients" class="form-control" required></select>
 
                             </div>
                             <div class="col-md-12 mb-3">
@@ -71,7 +71,7 @@ else
                                     Sposób przygotowania
                                     <i class="fa-solid fa-circle-info has-tooltip" data-toggle="tooltip" data-placement="bottom" title="Aby podzielić przepis na korki po każdym kroku należy wcisnąć 2 razy klawisz Enter"></i>
                                 </label>
-                                <textarea class="form-control" aria-label="With textarea" asp-for="Directions" rows="10"></textarea>
+                                <textarea class="form-control" aria-label="With textarea" asp-for="Directions" rows="10" required></textarea>
                                 <span asp-validation-for="Directions" class="text-danger"></span>
                             </div>
                         </div>

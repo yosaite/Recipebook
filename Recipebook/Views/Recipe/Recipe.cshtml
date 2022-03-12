@@ -283,8 +283,9 @@
                             $('#comment-card').append(
                              `<div class="card-body p-4">
                                 ${ (comment==0) ?'<h4 class="mb-4 pb-2">Ostatnie komentarze</h4>':''}
-                                <div class="d-flex flex-start">
+                                <div class="d-flex flex-start avatar">
                                     <img
+                                        id="user-image"
                                         class="rounded-circle shadow-1-strong mr-3"
                                         src="${response[comment]['avatar']}"
                                         alt="avatar"
@@ -313,6 +314,7 @@
                 url: '/user/getAvatar',
                 type: 'GET',
                 success: function(response){
+                            console.log(response)
                          $('#user-image').prop('src',`${response}`)
                     },
                 error: function(){
@@ -331,7 +333,9 @@
 
 @section Styles{
     <style>
-    
+    #user-image{
+        object-fit: cover;
+    }
     .single-post__top__text,
     .single-post__middle__text {
     	margin-bottom: 25px;
