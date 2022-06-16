@@ -3,7 +3,7 @@ A web application using the MVC pattern that brings together people who want to 
 - Adding recipes with photos
 - Adding ingredients as 'tags'
 - Option to rate and comment on the recipe
-- Access facilities such as searching, sorting and pagination
+- Access facilities such as searching, sorting, pagination, etc.
 
 ## Some preview images
 ### Main page
