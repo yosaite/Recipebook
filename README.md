@@ -1,5 +1,5 @@
 # Recipebook
-An online cookbook for sharing recipes with other users. App has features like:
+A web application using the MVC pattern that brings together people who want to share their culinary recipes with others. App has features like:
 - Adding recipes with photos
 - Adding ingredients as 'tags'
 - Option to rate and comment on the recipe
